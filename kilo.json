@@ -1,0 +1,101 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "provider": {
+    "ollama": {
+      "options": {
+        "baseURL": "http://100.102.23.27:11434/v1"
+      },
+      "models": {
+        "gsp/general:latest": {
+          "name": "GSP General",
+          "tool_call": true
+        },
+        "gsp/executor:latest": {
+          "name": "GSP Executor",
+          "tool_call": true
+        },
+        "gsp/senior-analyst:latest": {
+          "name": "GSP Senior Analyst",
+          "tool_call": true
+        },
+        "qwen3.6:35b": {
+          "name": "Qwen 3.6 35B",
+          "tool_call": true
+        },
+        "qwen3.6:27b": {
+          "name": "Qwen 3.6 27B",
+          "tool_call": true
+        },
+        "qwen3.6:35b-shared": {
+          "name": "Qwen 3.6 35B Shared",
+          "tool_call": true
+        },
+        "qwen3.6:27b-shared": {
+          "name": "Qwen 3.6 27B Shared",
+          "tool_call": true
+        },
+        "qwen3-embedding:8b": {
+          "name": "Qwen3 Embedding 8B",
+          "tool_call": false
+        },
+        "deepseek-r1:70b": {
+          "name": "DeepSeek R1 70B",
+          "tool_call": true
+        },
+        "nomic-embed-text-v2-moe:latest": {
+          "name": "Nomic Embed Text v2 MoE",
+          "tool_call": false
+        },
+        "Krakekai/qwen3-reranker-8b:latest": {
+          "name": "Qwen3 Reranker 8B",
+          "tool_call": false
+        },
+        "bona/bge-reranker-v2-m3:latest": {
+          "name": "BGE Reranker v2 M3",
+          "tool_call": false
+        },
+        "nutboy02/Qwen3.6-35B-A3B-Claude-4.7-Opus-abliterated-uncenfull:latest": {
+          "name": "Qwen 3.6 35B (Nutboy02)",
+          "tool_call": true
+        }
+      }
+    }
+  },
+  "mcp": {
+    "puppeteer": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-puppeteer"
+      ]
+    }
+  },
+  "skills": {
+    "paths": [
+      "skills/agent-md-refactor",
+      "skills/canvas-design",
+      "skills/checkpoint-resume",
+      "skills/code-review-senior",
+      "skills/content-research-writer",
+      "skills/context-engineering",
+      "skills/docx",
+      "skills/dry-run-verify-fix",
+      "skills/eval-driven-improver",
+      "skills/human-in-loop-gate",
+      "skills/image-enhancer",
+      "skills/mcp-integration",
+      "skills/observability-tracer",
+      "skills/orchestrator-worker",
+      "skills/pdf",
+      "skills/plan-and-execute",
+      "skills/pptx",
+      "skills/reflection-loop",
+      "skills/security-review-gate",
+      "skills/self-healing-loop",
+      "skills/skill-creator-kilo",
+      "skills/tool-design-optimizer",
+      "skills/xlsx"
+    ]
+  }
+}

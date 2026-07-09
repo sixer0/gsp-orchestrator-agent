@@ -1,0 +1,8 @@
+output/
+docs/
+node_modules/
+.DS_Store
+*.bak
+models.json.*.bak
+kilo.jsonc
+*.tar.gz

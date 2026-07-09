@@ -354,7 +354,7 @@ Reference: identification/02_structured.md checkpoint feedback loop for Phase 2 
 |----------------|-------------|----------|
 | Research Track 1-5 review | Content quality/gaps with main problem | `data-analyst-local` |
 | Final Spec Analysis review | Spec inconsistency | `data-analyst-local` |
-| Implementation Plan review | Spec gap / estimation error | `data-analyst-local` / `pm-planner` |
+| Implementation Plan review | Spec gap / estimation error | `data-analyst-local` / `pm-planner-local` |
 | Environment Readiness | Runtime missing / build fail | `docker-specialist-local` / `coder-execution-local` |
 | Database Design Check | Schema/migration/index issue | `database-specialist-local` |
 | Per-Phase Unit Test | Test failure | `coder-execution-local` |

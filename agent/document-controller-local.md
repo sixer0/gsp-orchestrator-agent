@@ -4,7 +4,6 @@ description: Fallback: Document workflow orchestrator when primary rate-limited 
 mode: all
 steps: 50
 color: "#F59E0B"
-model: kilo/kilo-auto/free
 ---
 
 

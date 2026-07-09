@@ -57,6 +57,66 @@
         "nutboy02/Qwen3.6-35B-A3B-Claude-4.7-Opus-abliterated-uncenfull:latest": {
           "name": "Qwen 3.6 35B (Nutboy02)",
           "tool_call": true
+        },
+        "gsp/orchestrator:latest": {
+          "name": "GSP Orchestrator",
+          "tool_call": true
+        },
+        "gsp/task-architect:latest": {
+          "name": "GSP Task Architect",
+          "tool_call": true
+        },
+        "gsp/solution-architect:latest": {
+          "name": "GSP Solution Architect",
+          "tool_call": true
+        },
+        "gsp/data-analyst:latest": {
+          "name": "GSP Data Analyst",
+          "tool_call": true
+        },
+        "gsp/data-collector:latest": {
+          "name": "GSP Data Collector",
+          "tool_call": true
+        },
+        "gsp/explorer:latest": {
+          "name": "GSP Explorer",
+          "tool_call": true
+        },
+        "gsp/translator:latest": {
+          "name": "GSP Translator",
+          "tool_call": true
+        },
+        "gsp/data-verifikator:latest": {
+          "name": "GSP Data Verifikator",
+          "tool_call": true
+        },
+        "gsp/reviewer:latest": {
+          "name": "GSP Reviewer",
+          "tool_call": true
+        },
+        "gsp/developer:latest": {
+          "name": "GSP Developer",
+          "tool_call": true
+        },
+        "gsp/doc-writer:latest": {
+          "name": "GSP Doc Writer",
+          "tool_call": true
+        },
+        "gsp/helpdesk:latest": {
+          "name": "GSP Helpdesk",
+          "tool_call": true
+        },
+        "gsp/procurement-manager:latest": {
+          "name": "GSP Procurement Manager",
+          "tool_call": true
+        },
+        "gsp/sales-manager:latest": {
+          "name": "GSP Sales Manager",
+          "tool_call": true
+        },
+        "llama4:16x17b": {
+          "name": "Llama 4 16x17B MoE",
+          "tool_call": true
         }
       }
     }

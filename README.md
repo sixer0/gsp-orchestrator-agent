@@ -1,6 +1,6 @@
 # GSP Orchestrator Agent
 
-Multi-agent orchestration configuration repository for the Kilo runtime. Contains 51 agent definitions, 40+ specialized skill modules, 18 custom commands, and a complete phase-accountable workflow for automated software development, research, and documentation.
+Multi-agent orchestration configuration repository for the Kilo runtime. Contains 51 agent definitions, 42 specialized skill modules, 18 custom commands, and a complete phase-accountable workflow for automated software development, research, and documentation.
 
 ## Overview
 
@@ -166,9 +166,9 @@ User Request
 
 | Agent | Mode | Model | Description |
 |-------|------|-------|-------------|
-| `explore` | Subagent | Ollama GSP General | Map codebase structure and report |
-| `data-collector` | Subagent | Ollama GSP General | Systematic data gathering |
-| `data-analyst` | Subagent | DeepSeek V4 Pro | Synthesize analysis and specifications |
+| `explore` | Subagent | Ollama GSP Explorer | Map codebase structure and report |
+| `data-collector` | Subagent | Ollama GSP Data Collector | Systematic data gathering |
+| `data-analyst` | Subagent | Ollama GSP Senior Analyst | Synthesize analysis and specifications |
 | `data-analyst-local` | Subagent | Ollama GSP Senior Analyst | Local fallback for analysis |
 
 ### PM / Business Analysis

@@ -1,6 +1,52 @@
+# Build and cache
+node_modules/
+dist/
+build/
+.next/
+*.o
+*.pyc
+__pycache__/
+.cache/
+.vite/
+.output/
+
+# Credentials and sensitive files
+.env
+.env.*
+*.key
+*.pem
+*.crt
+*.cer
+secrets/
+credentials/
+*.token
+token.*
+netrc
+.netrc
+id_rsa
+id_ed25519
+config.local.*
+*.secret
+secrets.*
+
+# Editor and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Kilo internal state
+kilo-state.json
+agent-manager.json
+memory/heartbeat-state.json
+*.pid
+
+# Existing entries
 output/
 docs/
-node_modules/
 .DS_Store
 *.bak
 models.json.*.bak

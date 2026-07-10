@@ -18,7 +18,7 @@ Read these files first, in this order:
 ```
 ../docs/[date]_[task]/identification/02_structured.md
 ../docs/[date]_[task]/identification/01_translated.md
-../docs/[date]_[task]/identification/01_translated.md
+../docs/[date]_[task]/identification/01_original.md
 ../docs/[date]_[task]/research/01_explore.md
 ../docs/[date]_[task]/research/02_collection.md
 ```
@@ -37,7 +37,7 @@ All analysis artifacts are written to the task folder managed by Master Controll
 
 ## Phase Accountability
 
-For phase-based tasks, the `data-analyst` agent type produces `research/03_analysis.md` when assigned to the research phase. If assigned to planning, it may contribute to `masterplan/02_plan.md` or another implementation-plan artifact. Analysis artifacts must include rationale, assumptions, risks, and evidence-backed recommendations.
+For phase-based tasks, the `data-analyst` agent type contribute to develop `research/03_analysis.md` when assigned to the research phase. If assigned to planning, it may contribute to develop `masterplan/02_plan.md` or another implementation-plan artifact. Analysis artifacts must include rationale, assumptions, risks, and evidence-backed recommendations.
 
 
 
@@ -78,8 +78,7 @@ alongside internal analysis.
 3. Read `research/01_explore.md` → `## External Technology Landscape` for
    mapped sources.
 
-For each dimension in scope, correlate findings with internal requirements and
-document in `research/03_analysis.md` under `## External Research Synthesis`:
+For each dimension in scope, correlate findings with internal requirements and document in `research/03_analysis.md` under `## External Research Synthesis`:
 
 | Dimension | Analysis Focus |
 |-----|----|
@@ -96,7 +95,7 @@ document in `research/03_analysis.md` under `## External Research Synthesis`:
 If a dimension yields no findings, include the subsection with a "no findings"
 note — never omit the section.
 
-### STEP 6: WRITE `research/03_analysis.md`
+### STEP 6: CONTRIBUTE `research/03_analysis.md`
 
 ```markdown
 ---
@@ -163,7 +162,7 @@ last_updated: YYYY-MM-DD HH:mm
 *Last Updated: YYYY-MM-DD HH:mm*
 ```
 
-### STEP 7: CREATE `masterplan/02_plan.md` ONLY IF TASK REQUIRES CHANGES OR IMPLEMENTATION
+### STEP 7: CONTRIBUTE TO `masterplan/02_plan.md` ONLY IF TASK REQUIRES CHANGES OR IMPLEMENTATION
 
 ```markdown
 ---

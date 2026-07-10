@@ -65,6 +65,13 @@
   - All changes committed and apps running in background.
 - **Previous session:** UI/UX redesign for Certification Marketplace using Tailwind CSS and React-native interactions; committed and pushed to GitHub (master branch).
 
+### GSP Orchestration Project DOCX — Batch 5 Complete (2026-07-10)
+- **Chapter 5 (Analisis Dua Jalur Orkestrasi)** appended to existing DOCX document
+- 8 sections covering paid vs local path architecture, 8-dimension capability comparison (Tabel 5.1), 50-agent model mapping across 9 sub-tables (Tabel 5.2a-5.2i), fallback mechanism, architectural implications
+- DOCX grew from 73KB → 87.7KB, 376 → 464 paragraphs, 9 → 19 tables
+- Sources: `research/03_analysis.md`, `research/01_explore.md`, `masterplan/01_specs.md`
+- Chapters 6-12 pending in sequential writing pipeline
+
 ## Key Lessons Learned
 ### AI Agent Preview (2026-05-18 to 2026-05-19)
 1. **PostCSS config is required:** Tailwind 4 needs an explicit `postcss.config.js` (`plugins: { tailwindcss: {}, autoprefixer: {} }`). Zero-config builds can break silently.

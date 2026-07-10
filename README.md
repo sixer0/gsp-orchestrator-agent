@@ -114,7 +114,7 @@ User Request
      |
      v
 +------------------+
-| Coder Execution  |  -- Implementation (may be multiple rounds)
+| Executor Agent   |  -- Implementation (may be multiple rounds / agents)
 +------------------+
      |
      +--------+--------+--------+

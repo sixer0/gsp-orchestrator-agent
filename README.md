@@ -36,9 +36,9 @@ Agents that perform research (data-analyst, pm-analyst, data-collector, explore,
 
 Every agent delegation produces a `delegation_progress_report.md` in the task's `/docs` folder. Artifacts follow strict naming conventions (`snake_case`, zero-indexed numbering), are additive only, and are never written to `/output/`. The contract is enforced at the controller level before phase transitions.
 
-### Free-Tier Fallback Architecture
+### Local Friendly Architecture
 
-Each paid cloud agent has a corresponding `*-local` variant configured to run on local Ollama models. The master controller attempts the paid agent first; if rate-limited or unavailable, it transparently falls back to the local variant. Local variants preserve the same workflow structure and accountability scope, with slightly condensed content to account for smaller context windows.
+Each paid cloud agent has a corresponding `*-local` variant configured to run on local Ollama models. Local variants preserve the same workflow structure and accountability scope, with slightly condensed content to account for smaller context windows.
 
 ### Source-to-Spec-to-Impact Research
 
@@ -58,7 +58,7 @@ Every task is classified into one of 7 scale categories at the identification ph
 | Enhancement | Additive feature on existing code | Moderate: targeted source + spec |
 | Refactor | Structural change, same behavior | Full: deep source + impact |
 | Migration | Platform/language/dependency change | Full: all 7 external dimensions |
-| Research | Feasibility, exploration, POC | Source + external research only |
+| Research | Feasibility, exploration, POC | Maximum: Full Source + external research |
 | Debug | Bug reproduction and fix | Targeted: minimal source + spec |
 | Administration | Config, docs, tooling | Minimal or none |
 
@@ -149,11 +149,11 @@ User Request
 | Agent | Mode | Description |
 |-------|------|-------------|
 | `master-controller` | Primary | Orchestrates full development workflow; gate keeper, phase enforcer |
-| `master-controller-local` | Primary | Fallback: local-tier master controller |
+| `master-controller-local` | Primary | Local-tier master controller |
 | `pm-controller` | Primary | PM/BA workflow orchestration |
-| `pm-controller-local` | Primary | Fallback: local-tier PM/BA orchestrator |
+| `pm-controller-local` | Primary | Local-tier PM/BA orchestrator |
 | `document-controller` | Primary | Document lifecycle orchestration |
-| `document-controller-local` | Primary | Fallback: local-tier document orchestrator |
+| `document-controller-local` | Primary | Local-tier document orchestrator |
 
 ### Translation & Architecture
 
@@ -188,9 +188,9 @@ User Request
 
 | Agent | Mode | Model | Description |
 |-------|------|-------|-------------|
-| `coder-execution` | Subagent | DeepSeek V4 Flash | Code implementation |
+| `coder-execution` | Subagent | DeepSeek V4 Pro | Code implementation |
 | `coder-execution-local` | Subagent | Ollama GSP Executor | Local fallback for implementation |
-| `senior-code-reviewer` | Subagent | DeepSeek V4 Flash | Code review: duplication, maintainability, dependencies |
+| `senior-code-reviewer` | Subagent | DeepSeek V4 Pro | Code review: duplication, maintainability, dependencies |
 | `senior-code-reviewer-local` | Subagent | Ollama GSP Senior Analyst | Local fallback for code review |
 | `verifier` | Subagent | Stepfun Step 3.7 Flash | Verification and testing |
 | `verifier-local` | Subagent | Ollama GSP General | Local fallback for verification |
@@ -241,8 +241,8 @@ User Request
 |-------|-------|-------------|
 | `ask` | Kilo auto (free) | General Q&A |
 | `plan` | Ollama GSP Senior Analyst | Planning agent |
-| `debug` | Stepfun Step 3.7 Flash | Debugging agent |
-| `orchestrator` | DeepSeek V4 Pro | General orchestrator |
+| `debug` | Ollama GSP Exevutor | Debugging agent |
+| `orchestrator` | Ollama GSP Orchestrator | General orchestrator |
 | `code` | Ollama GSP Executor | Code agent |
 
 ### Agent Configuration Summary

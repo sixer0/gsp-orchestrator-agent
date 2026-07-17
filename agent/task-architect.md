@@ -233,10 +233,72 @@ You receive from Master Controller:
 1. **Task folder** — `/docs/[date]_[task]/`
 2. **Task ID** — matching `identification/01_translated.md`
 3. **Path to `identification/01_translated.md`** — parsed intent, goals, scope, constraints, history relevance
+4. **Prior task context (when applicable):**
+   - `prior_task_folder` — path to the prior task's `/docs/` folder
+   - `prior_02_structured.md` — the prior task's structured task breakdown
+   - `prior_decisions.md` — decisions made during the prior task
+   - `prior_report.md` — final report from the prior task
+
+**Conditional behavior:** If no prior task context is provided (items 4a–4d), proceed with standard stateless workflow. If provided, MUST load prior task state during STEP 0 before STEP 1.
 
 ---
 
 ## Your Step-by-Step Workflow
+
+### STEP 0: LOAD STATE, CONTEXT & MEMORY
+
+**Execute this step before any other step.**
+
+#### Sub-step 1: Load Prior Task Artifacts (if prior context provided)
+
+If prior task context was provided in the Inputs (prior_task_folder, prior_02_structured, prior_decisions, prior_report):
+1. Read `prior_02_structured.md` — understand the prior task's structure and scope
+2. Read `prior_decisions.md` — identify key decisions made
+3. Read `prior_report.md` — understand the prior task's outcomes and unresolved items
+4. Output a `## Prior Task Continuity` section in `02_structured.md` with summary, inherited decisions, open items, and conflicts
+
+If a required prior-task artifact is missing (expected path does not exist):
+```
+ARCHITECTURE_BLOCKED
+
+## Missing Prior-Task Artifact
+- Missing artifact: [specific missing path]
+- Provided context includes prior_task_folder but required artifact was not found
+
+## Suggested Action
+- Verify the prior task path and artifacts with Master Controller
+```
+
+STOP — do not proceed to STEP 1 until this is resolved.
+
+#### Sub-step 2: Memory Screening (Always)
+
+Before loading task input:
+1. Read `MEMORY.md` — identify relevant project context, user preferences, or critical decisions
+2. Check `memory/refs/` — look for references matching the current task's scope
+3. Check `memory/tasks/` — search for reports or compaction snapshots related to similar tasks
+4. Incorporate findings into the **Architecture Challenge & Refinement** section of `02_structured.md`
+
+#### Sub-step 3: Verify Required Task Artifacts Exist
+
+Expected minimum artifacts:
+- `identification/01_original.md`
+- `identification/01_translated.md`
+
+If either is missing:
+```
+ARCHITECTURE_BLOCKED
+
+## Missing Information
+- [specific missing item]
+
+## Suggested Action
+- Re-delegate to request-translator to produce missing artifact.
+```
+
+STOP.
+
+---
 
 ### STEP 1: READ SOURCE MATERIAL
 
@@ -314,8 +376,7 @@ After the task-architect refines `identification/02_structured.md`:
 - The task-architect may be re-invoked for verification steps (phase accountability validation, final quality check) because those are analytical/design tasks, not implementation tasks
 
 **Task decomposition principles:**
-- Break into **3-7 subtasks** (too few = vague, too many = fragmented)
-- Each subtask must be **independently verifiable**
+- **Atomicity rule:** each step covers exactly ONE task — one product, one module, one file, one concern domain. Never batch multiple independent items into a single step regardless of item count. **No upper limit:** the number of steps is determined by the number of independent task items, NOT by an arbitrary range. A task with 22 products gets 22 steps. Each step must be independently verifiable.
 - **Dependencies must form a DAG** (no circular dependencies)
 - **Subtask types** (map to agents or skills):
   - `Agent-mapped`: Delegate to a specific agent (e.g., `coder-execution`, `verifier`)
@@ -346,6 +407,8 @@ Each step MUST include:
 - **Depends On**: prerequisite step(s) or external artifacts
 - **Verification**: how to confirm the step succeeded
 - **Priority / Phase**: e.g. discovery → analysis → execution → verification
+
+**Anti-batching constraint:** Each step in the Structured Task Breakdown table MUST produce exactly ONE expected output artifact. Steps producing more than one output, referencing more than one product/module/file, or combining multiple concern domains are rejected. If a step's Task Description contains "and" connecting two distinct actions or items, it must be split — "and" is a split trigger, not a conjunction.
 
 **Design principle:** every step is a single, unambiguous delegation unit.
 **Design protocol never skip but adjustable to the scenario:** 
@@ -552,6 +615,25 @@ For the overall task, specify:
 
 ---
 
+### Template Structure Rule
+
+The `identification/02_structured.md` document is divided into **two regions**:
+
+**1. Context Region (Narrative)**
+- Above the `## Structured Task Breakdown` section
+- Contains: architecture challenge, scale category, constraints, risks, prior task continuity, scope refinement — narrative prose for human/agent understanding
+- **No execution instructions may appear in this region**
+
+**2. Execution Region (Table — PRIMARY OUTPUT)**
+- The `## Structured Task Breakdown` table and below
+- Contains all delegable steps in the mandatory 7-column table format
+- This is the **controller-executable** part — every row is a delegation unit
+- All delegable instructions MUST go here, not in the context region
+
+**Rule:** No execution instructions (agent delegations, step descriptions, verification criteria) may appear in the Context Region. All delegable steps belong in the Execution Region table.
+
+---
+
 ### STEP 5: WRITE `identification/02_structured.md`
 
 Write the following document to `/docs/[date]_[task]/identification/02_structured.md`:
@@ -576,6 +658,18 @@ status: pending
 - **Goals**: [copied from identification/01_translated.md]
 - **Parsed Scope**: [copied from identification/01_translated.md]
 - **Identified Constraints**: [copied from identification/01_translated.md]
+
+## Prior Task Continuity (when applicable)
+
+*Include this section only when prior task context is provided by the Master Controller.*
+
+- **Prior Task path**: [path to prior task folder]
+- **Prior Task Summary**: [one-paragraph summary of the prior task's goal and outcome]
+- **Inherited Decisions**: [key decisions from the prior task that affect this one]
+- **Open Items**: [unresolved items carried forward]
+- **Conflicts / Inconsistencies**: [differences between prior decisions and current requirements that must be reconciled]
+
+---
 
 ## Architecture Challenge & Refinement
 
@@ -638,8 +732,31 @@ If the flag is **absent** or **false**, skip Phase 3b entirely and proceed from 
 
 ## Structured Task Breakdown
 
-For **research-only tasks**: include full execution steps as needed.
-For **all other tasks** (New Project, Enhancement, Refactor, Migration, Debug, Administration): include **only research, discovery, collection, analysis, and spec steps** in the initial breakdown. The last step MUST be a re-delegation back to `task-architect` for implementation planning after research confirms scope.
+> **PRIMARY OUTPUT — Controller-Executable Table**
+> CRITICAL: This table is the PRIMARY execution artifact. The master controller reads EACH ROW as a delegation unit. Supporting narrative context (architecture challenge, scale category, constraints, risks) goes in sections ABOVE this table. No execution instructions may appear above this point.
+
+**For research-only tasks:** include full execution steps as needed.
+**For all other tasks** (New Project, Enhancement, Refactor, Migration, Debug, Administration): include **only research, discovery, collection, analysis, and spec steps** in the initial breakdown. The last step MUST be a re-delegation back to `task-architect` for implementation planning after research confirms scope.
+
+### Mandatory 7-Column Format
+
+| Column | Requirement | Format Rules |
+|--------|-------------|--------------|
+| **Step** | Sequential integer (1, 2, 3...) | No ranges, no sub-steps |
+| **Task Description** | Single, atomic action — what this step does | No "and" connecting distinct actions. If "and" connects two actions → split into separate steps. |
+| **Agent_to_Invoke** | Exact agent name from the Agent Catalog | Must match catalog exactly. Use `-local` fallback when applicable. |
+| **Expected Output** | Single concrete deliverable (file, decision, report) | Exactly ONE output per row. No "and" in outputs. |
+| **Depends On** | Prerequisite step(s) or external artifacts by name | List step numbers or artifact paths. DAG must be acyclic. |
+| **Verification** | How to confirm the step succeeded | Measurable criteria, not subjective. |
+| **Phase** | Phase identifier (discovery, analysis, execution, verification, masterplan, docs) | One phase per row. |
+
+### Format Enforcement Rules
+1. **No merged cells** — each cell contains exactly one value
+2. **No nested tables** — the breakdown is a single flat table
+3. **No multi-line cells** — each cell is a single line or a concise bullet list; use supporting sections for long descriptions
+4. **No narrative prose between rows** — the table is self-contained; all context belongs in sections above
+5. **Every column must be populated** — no empty cells; if a step has no dependency, write "—"
+6. **The table is the PRIMARY output** — if there is a conflict between narrative text above and a table row, the table row governs
 
 | Step | Task Description | Agent_to_Invoke | Expected Output | Depends On | Verification | Phase |
 |------|------------------|-----    --------|------    ------|---    -----|--------------|----|
@@ -872,6 +989,36 @@ Phase 3 (Verification) → Phase 4 (Report) — Phase 3b is skipped entirely
 - **Mitigation Strategies**: [how to address each]
 - **Assumptions & Caveats**: [residual uncertainty]
 
+## Recommendation & Next-Plan Summary (MANDATORY)
+
+**This section is mandatory — never leave it empty or TBD.** It provides forward-looking guidance for the master controller and downstream agents.
+
+### Key Findings Summary
+| # | Finding | Confidence | Evidence Source | Implication |
+|---|---------|------------|-----------------|-------------|
+| 1 | [key finding 1] | [High/Medium/Low] | [path or reference] | [impact on task] |
+| 2 | [key finding 2] | [High/Medium/Low] | [path or reference] | [impact on task] |
+
+### Priority Recommendations
+| Priority | Recommendation | Rationale | Risk if Ignored | Target Phase/Task |
+|----------|---------------|-----------|-----------------|-------------------|
+| P0 | [must-do] | [reason] | [escalation risk] | [phase or step] |
+| P1 | [should-do] | [reason] | [moderate risk] | [phase or step] |
+| P2 | [nice-to-do] | [reason] | [low risk] | [phase or step] |
+
+### Pending Decisions for Human-in-Loop
+| # | Decision Required | Options | Recommended Option | Impact |
+|---|-------------------|---------|-------------------|--------|
+| 1 | [question] | [A / B / C] | [recommendation] | [effect of choice] |
+
+### Next-Plan Recommendations
+- **Immediate next step**: [what to do first after approval]
+- **Subsequent tasks**: [ordered list of follow-up work]
+- **Parallelizable work**: [tasks that can run concurrently]
+- **Cross-task continuity notes**: [state to carry forward]
+
+---
+
 ## Agent Mapping Rationale
 
 For each major agent used, briefly justify:
@@ -909,6 +1056,8 @@ TASK_ARCHITECTED
 - Research triad: [Source → Spec → Impact coverage summary]
 - Phases: [discovery / analysis / execution / verification]
 - Agents involved: [comma-separated distinct agents used]
+- **Atomicity self-check**: [PASS / FAIL] — confirm no step batches multiple independent items. If FAIL, the master controller must re-delegate to task-architect before proceeding.
+- **Table format check**: [PASS / FAIL] — confirm the Structured Task Breakdown uses the mandatory 7-column table format with no narrative prose between rows. If FAIL, fix before returning.
 
 ## Key Refinements Made
 - [Ambiguity removed 1]
@@ -918,8 +1067,9 @@ TASK_ARCHITECTED
 ## Next Steps
 Master controller should now:
 1. Re-read `identification/02_structured.md`
-2. Present summary to user for approval
-3. Delegate to agents in the order and mapping specified
+2. Present the **Recommendation & Next-Plan Summary section** to user via HIL gate for approval
+3. Delegate per the Structured Task Breakdown table in the order and mapping specified
+4. Persist the Recommendation Summary as a standalone reference in `decisions/decisions.md` for cross-task continuity
 ```
 
 ---

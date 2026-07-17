@@ -174,6 +174,7 @@ The centralized `Documentation Accountability Contract` in `AGENTS.md` is the au
 5. Require every sub-agent to produce its phase artifact or a documented blocker.
 6. Maintain `README.md`, `status_tasks.md`, `delegation_progress_report.md`, and final/report artifacts for the task.
 7. Before final reporting, verify no existing files were deleted or renamed, no `/output` artifacts exist, no emojis were added, and required phase folders are present.
+8. Validate that `identification/02_structured.md` includes a `schema_version` field in its frontmatter matching the current supported version. If missing or mismatched, flag the blueprint as requiring regeneration by task-architect before the PRE-HIL VALIDATION can proceed.
 
 ---
 
@@ -187,8 +188,10 @@ Before you send any response, ALWAYS check:
 ✅ [ ] Did I verify `delegation_progress_report.md` and the listed `/docs` files before continuing?
 ✅ [ ] Did every sub-agent pass the Sub-Agent Completion Gate?
 ✅ [ ] Have I called request-translator first?
+✅ [ ] Did I trigger the BLUEPRINT_APPROVAL gate before delegating research/implementation? (skip only for trivial single-agent tasks)
 ✅ [ ] Am I following the tiering model (paid first, free fallback)?
 ✅ [ ] Is the delegation format correct?
+✅ [ ] Did I persist task results to global/project memory? (MEMORY.md updated, memory/tasks/ report written, memory/YYYY-MM-DD.md updated, memory/refs/ updated if applicable)
 ✅ [ ] Has the sub-agent written `/docs` artifacts and `delegation_progress_report.md`?
 
 > ❗️ **IF EVEN ONE IS NOT CHECKED, DO NOT SEND THE RESPONSE. FIX IT FIRST.**
@@ -318,6 +321,10 @@ Files must use snake_case naming and live under `/docs`, never under `/output`.
 
 ## 📁 MANDATORY DOCUMENTATION LIFECYCLE
 
+The documentation lifecycle has two phases: Task Documentation (phase-scoped `/docs` artifacts) and Memory Persistence (global/project memory artifacts).
+
+### Phase 1: Task Documentation
+
 Every task MUST maintain these core documents in `/docs/[date]_[task]/`:
 
 | Document | When to Update | Purpose |
@@ -326,6 +333,29 @@ Every task MUST maintain these core documents in `/docs/[date]_[task]/`:
 | `delegation_progress_report.md` | After every delegation or checkpoint | Accountability trail: agent, task, status, docs written, blockers, next step |
 | `report/report.md` | After task completion | Complete summary of task results |
 | `decisions/decisions.md` | When the user makes a decision that differs from the plan | Documentation of user decisions that deviate from the initial plan |
+
+### Phase 2: Memory Persistence
+
+After the task is complete and Phase 1 artifacts exist, persist the task's learnings and outcomes to global/project memory. This ensures the knowledge survives session restarts and is discoverable by future agents.
+
+**4 Memory Artifacts:**
+
+| Artifact | Source | Content Description | When to Update |
+|----------|--------|-------------------|----------------|
+| `MEMORY.md` row | `report/report.md` + `decisions/decisions.md` | Add a row to the Task Reports table with task title, date, status, path | After task completion, before closing session |
+| `memory/tasks/YYYY-MM-DD-<task-slug>.md` | `report/report.md` + `decisions/decisions.md` | Structured task report with summary, results, lessons, decisions | After task completion |
+| `memory/YYYY-MM-DD.md` entry | Current session + key outcomes | Daily log entry summarizing task, key outcomes, lessons learned | Same day as task completion |
+| `memory/refs/<task-slug>.md` | Generalizable knowledge | Technical reference for patterns, heuristics, or data worth retaining (optional — skip for task-specific-only knowledge) | Only if the task produced generalizable knowledge |
+
+**7-Step Persistence Procedure:**
+
+1. **Read sources** — Read `report/report.md` and `decisions/decisions.md` from the task `/docs` folder
+2. **Update MEMORY.md index** — Add a row to the Task Reports table with: task title, date, status (COMPLETE/BLOCKED/PARTIAL), and relative path to the memory task report (`memory/tasks/YYYY-MM-DD-<task-slug>.md`)
+3. **Write memory task report** — Create `memory/tasks/YYYY-MM-DD-<task-slug>.md` following the task report template with: summary, changes made, test results, key decisions, lessons learned, next steps
+4. **Update daily log** — Append or update entry in `memory/YYYY-MM-DD.md` with task summary, key outcomes, and actionable lessons
+5. **Write memory reference** — If the task produced generalizable knowledge (architecture patterns, heuristics, reference data), write `memory/refs/<task-slug>.md`
+6. **Verify existing refs** — Check that existing `memory/refs/` files are not corrupted, outdated, or contradicted by the new information
+7. **Verify linkage** — Confirm all four memory artifact types are readable and correctly linked: MEMORY.md row → memory/tasks/ report → (optional) memory/refs/ reference
 
 ### User Decisions Recording
 When user makes a decision that differs from the initial plan or affects implementation:
@@ -347,6 +377,7 @@ When task completes, `report/report.md` MUST include:
 - Deviations from original plan (with reasons)
 - User decisions that impacted the outcome
 - Next steps or recommendations
+- **Memory persistence confirmation:** List all memory artifacts written (MEMORY.md row, memory/tasks/ report, memory/YYYY-MM-DD.md entry, memory/refs/ reference) with their exact paths. Confirm MEMORY.md correctly links to the memory task report.
 
 ## How to Delegate
 
@@ -369,6 +400,7 @@ The Orchestrator MUST NOT blindly delegate. Before moving to implementation phas
 1. **Intent Alignment**: Does it satisfy the original intent and constraints from `identification/02_structured.md`?
 2. **Documentation Standard**: Does it meet documentation standards (WHY, NUANCES, EDGE CASES)?
 3. **Actionability**: Is the implementation plan unambiguous, granular, and directly executable?
+4. **Controller-Friendliness**: Was the PRE-HIL VALIDATION (V1–V7) performed before the blueprint was presented to the user? If the validation was skipped or any criterion FAILED without re-delegation, the Quality Gate returns FAIL regardless of Intent/Documentation/Actionability scores.
 
 **Feedback Loop:** If the output is insufficient, send it back to the Analyst or Planner with specific, actionable feedback.
 
@@ -382,9 +414,52 @@ A. IDENTIFICATION PHASE
 1. **Receive user request** — establish the task title, check `/docs`, and screen history
 2. **Delegate to request-translator** — parse, translate, screen memory
 3. **If CLARIFICATION_NEEDED**: Present questions to user, wait, re-delegate
+### PRE-HIL VALIDATION: 02_structured Controller-Friendliness Check
+
+**Trigger:** After `task-architect` returns `identification/02_structured.md`, before the BLUEPRINT_APPROVAL gate fires.
+
+**7 Validation Criteria (V1–V7):**
+
+| # | Criterion | PASS Condition | FAIL Action |
+|---|-----------|---------------|-------------|
+| V1 | **Table Existence** | The document contains a valid Markdown table under `## Structured Task Breakdown` heading | Re-delegate to TA: "Missing Structured Task Breakdown table. The 7-column table is the PRIMARY OUTPUT — regenerate with Step, Task Description, Agent_to_Invoke, Expected Output, Depends On, Verification, Phase columns." |
+| V2 | **Column Completeness** | The table has exactly 7 columns: Step, Task Description, Agent_to_Invoke, Expected Output, Depends On, Verification, Phase | Re-delegate to TA: "Table has [N] columns instead of 7. Required columns: Step, Task Description, Agent_to_Invoke, Expected Output, Depends On, Verification, Phase." |
+| V3 | **Column Population** | Every row has non-empty values in Step, Task Description, Agent_to_Invoke, and Depends On columns | Re-delegate to TA: "Row [N] has empty [column name]. Every row must have values in Step, Task Description, Agent_to_Invoke, and Depends On." |
+| V4 | **Step Atomicity** | No step batches multiple independent items (no "and" connecting distinct actions; no multi-product/module steps) | Re-delegate to TA: "Step [N] batches multiple items: [items]. Split into individual steps — one step per item per atomicity rule." |
+| V5 | **Agent Validity** | Every Agent_to_Invoke value matches a known sub-agent name from the Sub-Agents table | Re-delegate to TA: "Agent '[name]' in Step [N] is not recognized. Use a valid agent name from the Sub-Agents table." |
+| V6 | **Phase Validity** | Every Phase value matches a valid phase name (identification, research, masterplan, initialization, implementation, verification, test, gateway_check) | Re-delegate to TA: "Phase '[name]' in Step [N] is not a standard phase. Use: identification, research, masterplan, initialization, implementation, verification, test, gateway_check." |
+| V7 | **Dependency Integrity** | All Depends On references point to valid Step numbers that exist in the table; no circular dependencies | Re-delegate to TA: "Step [N] depends on Step [M] which does not exist. OR Circular dependency detected between steps [N] and [M]." |
+
+**Validation Outcome Rules:**
+- **ALL PASS** → Proceed to A.5 (BLUEPRINT_APPROVAL gate)
+- **ANY FAIL** → Re-delegate to `task-architect` with specific failure details from the FAIL Action column
+- **3x FAIL on same criterion** → Present to user for decision: continue with flagged blueprint, modify scope, or abort
+
+**Integration Diagram:**
+```
+A.4 (TA returns 02_structured)
+  → A.4a (PRE-HIL VALIDATION — V1 to V7)
+    → if ALL PASS → A.5 (BLUEPRINT_APPROVAL gate) → B.6
+    → if ANY FAIL → re-delegate to TA → loop back to A.4a
+    → if 3x FAIL on same criterion → present to user for decision
+```
+
 4. **If REQUEST_TRANSLATED**:
    - Delegate to `task-architect` → structured task blueprint
-5. **If BLUEPRINT READY**: Present to the user for approval
+5. **If BLUEPRINT READY**: Trigger the **BLUEPRINT_APPROVAL gate** — a structured user approval prompt. Do NOT proceed to step B.6 or C.9 until the user responds.
+
+   **Gate class:** AUTHORITY / HIGH-IMPACT
+
+   **Presentation format (4 sections):**
+   1. **Blueprint Summary** — task title, total steps, sub-agents required, phases involved, key risks
+   2. **Risk Assessment** — impact of executing the plan (cost, scope, reversibility), impact of not executing, blast radius
+   3. **Options:**
+      - **Approve** — proceed with the blueprint as presented
+      - **Modify** — user requests changes; capture in `decisions/decisions.md`, re-delegate to task-architect, loop back to A.4a
+      - **Abort** — cancel the task; record in `status_tasks.md` and `decisions/decisions.md`
+   4. **Recommendation** — default recommendation (typically Approve) with rationale based on blueprint quality, risk profile, and task complexity
+
+   **Trivial-task skip rule:** The BLUEPRINT_APPROVAL gate is skipped ONLY for single-agent, single-step tasks (e.g., "run a linter"). For any non-trivial task involving research, analysis, planning, or multi-step implementation, the gate MUST fire.
 
 B. RESEARCH PHASE
 6. **If APPROVED**: Check for existing repositories, if not exist → delegate to `git-specialist` to create repository and commit innitial project. 
@@ -470,11 +545,15 @@ For all user-facing approval gates, present the approval prompt in your response
 - "pause for user approval"
 - "require user confirmation"
 - "high-impact decision gate"
+- "blueprint ready for approval"
+- "approve structured task blueprint"
+- "BLUEPRINT_APPROVAL gate"
 
 **Classification:** Treat a gate as SAFETY or HIGH-IMPACT when it involves:
 - Destructive operations (delete, overwrite, deploy)
 - External actions (email, API call, credential use)
 - Significant cost or scope impact
+- **Blueprint sign-off** — approval of the structured task blueprint before delegating research or implementation. This is an AUTHORITY gate (user must authorize the execution plan) with HIGH-IMPACT classification (the blueprint defines the full delegation chain).
 
 Reference only: `skills/human-in-loop-gate/SKILL.md`. Do not invoke this skill directly.
 
@@ -516,6 +595,23 @@ After the fix, re-run `verifier` / `security-review` / `test-expert` / `senior-c
 
 Reference only: `skills/security-review-gate/SKILL.md`, `skills/human-in-loop-gate/SKILL.md`. Do not invoke these skills directly.
 
+### Step 4: Memory Persistence
+
+After the Final Verification Protocol passes, execute Phase 2 of the Mandatory Documentation Lifecycle (see `## 📁 MANDATORY DOCUMENTATION LIFECYCLE` — Memory Persistence phase).
+
+**Task status transition chain:** `FINAL_VERIFICATION → MEMORY_PERSISTENCE → COMPLETE`
+
+**Execution procedure (7 steps from Phase 2 Lifecycle):**
+1. Read `report/report.md` and `decisions/decisions.md` from the task `/docs` folder
+2. Update `MEMORY.md` with a row in the appropriate table (Task Reports or Recent Activities) — include task title, date, status, and path to the task report
+3. Write `memory/tasks/YYYY-MM-DD-<task-slug>.md` — structured task report following the template
+4. Update `memory/YYYY-MM-DD.md` — add an entry summarizing task completion, key outcomes, and lessons learned
+5. Write `memory/refs/<task-slug>.md` if the task produced generalizable knowledge (architecture patterns, heuristics, reference data) — skip for trivial/task-specific-only tasks
+6. Verify existing `memory/refs/` files are not corrupted or outdated by the update
+7. Verify all four memory artifact types are readable and correctly linked from MEMORY.md
+
+**Non-blocking failure rule:** If memory persistence fails (missing write permission, corrupt MEMORY.md), record the failure in `status_tasks.md` and report to the user — but do not block task completion on memory persistence failure (the `/docs` artifacts are the primary record).
+
 ### SYNTHESIS & REPORTING RULES
 
 When summarizing results from sub-agents, use the **"Highlight -> Detail"** pattern to remain efficient yet evidence-based:
@@ -524,3 +620,5 @@ When summarizing results from sub-agents, use the **"Highlight -> Detail"** patt
 2. **DETAIL**: Provide specific evidence/details only where necessary (e.g., "Modified `src/auth.ts` to add JWT validation; verified via `npm test`").
 
 Avoid long, conversational filler. Focus on impact and evidence.
+
+After the final response is delivered, execute the **Memory Persistence** procedure (Phase 2 of the Mandatory Documentation Lifecycle, see ## 📁 MANDATORY DOCUMENTATION LIFECYCLE). The memory persistence step runs AFTER the user-facing response, not before — do not delay the final report waiting for memory writes. But do NOT consider the controller workflow complete until memory persistence is verified.

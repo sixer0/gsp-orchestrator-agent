@@ -14,6 +14,47 @@
 - **Stack:** NestJS + Next.js 15 + Prisma + SQLite + Radix UI + Tailwind v4
 - **Phase:** Phase 2 COMPLETE | Phase 3 PENDING
 
+## Current Project: ARSENAL IDS (2026-07-15)
+- **Project:** ARSENAL Intrusion Detection System — TNI AL
+- **Path:** `/Users/mbp/Documents/Project/ARSENAL/`
+- **Kontraktor:** PT Gemilang Satria Perkasa (GSP)
+- **Partner:** Heimdal Defence Pte Ltd (Singapore)
+- **Phase:** Riset 1 (Base Knowledge) + Riset 2 (Product Alternatives) + Riset 3 (Component & Vendor) ALL COMPLETE
+- **Top-level Index:** `docs/README.md` (mulai dari sini)
+- **Knowledge Base:** `docs/2026-07-15_arsenal_product_knowledge_compilation/`
+- **Alternative Research:** `docs/2026-07-15_arsenal_product_alternative_research/`
+- **Deep Reference:** `memory/refs/arsenal-product-research.md`
+- **Key Metrics:** 22 produk, Rp 32.6B potential savings, 21 PASS + 1 CAUTION gates
+- **CRITICAL FINDINGS (Riset 2):**
+  - OEM Direct Procurement: **Rp 32.6 Miliar savings** (8 produk markup tinggi)
+  - TKDN: 5/22 native (22.7%) → roadmap 90.9% dalam 5 tahun
+  - UU PDP: 4 produk biometrik (P13/P15/P16/P18) compliance gaps
+  - P21 Sentinel: SPECS BLACKOUT — CAUTION gate, minta datasheet
+  - P20: Base chassis only warning (Rp 43.7J tanpa I/O boards)
+  - 6 produk EOL: Semua sudah punya current-gen replacement
+- **R3 KEY FINDINGS (Component Decomposition):**
+  - ~270 komponen terdekomposisi: 98 local (36.3%), 119 import (44.1%), 53 hybrid (19.6%)
+  - TKDN 17/22 (77.3%) compliant via 3-track model (naik dari 22.7% baseline)
+  - Standardisasi 3 vendor: Supreme Cable + Indorack + ARSA = 92% produk
+  - Penghematan Rp 10.6-17.2B total (standardization + Heimdal bypass + HDD avoidance)
+  - 4 produk UU PDP non-compliant (P13/P15/P16/P18)
+  - 40+ HS codes identified, >85% BM 0% via ITA
+  - Deep Reference: `memory/refs/arsenal-r3-component-vendor.md`
+- **STATUS:** Ketiga riset SELESAI — siap untuk procurement planning
+- **Next:** Procurement execution, UU PDP compliance, TKDN exemption, P21 datasheet request
+
+## Task Reports
+
+| Date | Task | Status | Path |
+|------|------|--------|------|
+| 2026-07-16 | [Orchestration Issue Analysis](memory/tasks/2026-07-16-orchestration-issue-analysis.md) | COMPLETE | `docs/2026_07_16_orchestration_issue_analysis/` |
+| 2026-07-16 | [ARSENAL Product Alternative Research](memory/tasks/2026-07-16-arsenal-product-alternative-research.md) | COMPLETE | `docs/2026-07-15_arsenal_product_alternative_research/` |
+| 2026-07-16 | [ARSENAL Component & Vendor Research](memory/tasks/2026-07-16-arsenal-component-vendor-research.md) | COMPLETE | `docs/2026-07-16_arsenal_component_vendor_research/` |
+| 2026-07-15 | [ARSENAL Product Knowledge Base](memory/tasks/2026-07-15-arsenal-product-knowledge.md) | COMPLETE | `docs/2026-07-15_arsenal_product_knowledge_compilation/` |
+| 2026-07-09 | [Comprehensive Research Flow](memory/tasks/2026-07-09-comprehensive-research-flow.md) | COMPLETE | — |
+| 2026-06-12 | [E-commerce Phase 2](memory/tasks/2026-06-12-ecommerce-phase2-complete.md) | COMPLETE | `E:\Projects\e-commerse` |
+| 2026-05-17 | [Kilo Workflow Setup](memory/tasks/2026-05-17-kilo-workflow-setup.md) | COMPLETE | — |
+
 ## Recent Activities
 
 ### Library CLI Final Report and Private Archive Refresh (2026-06-19)
@@ -98,6 +139,46 @@
 ### Analyst Spec Artifact Assignment (2026-06-21)
 1. `data-analyst` should create `masterplan/01_specs.md` when assigned to the spec phase.
 2. `pm-planner` should consume `masterplan/01_specs.md` before creating `masterplan/02_plan.md`, rather than planning from analysis alone.
+
+### ARSENAL Product Knowledge Base (2026-07-15)
+- Completed comprehensive 22-product knowledge base with per-product 3-loop research architecture
+- Key insight: **Per-product deep research loops prevent hallucination** — batching multiple products into single agent runs causes quality degradation
+- 108 files produced across 7 phases (identification, research, masterplan, implementation, verification, report, decisions)
+- Lesson: Always use specialist agents (data-collector, data-analyst, verifier) before falling back to general agents — specialist agents have stronger prompts and domain knowledge
+- Lesson: OEM pattern in defense procurement: Chinese manufacturers (Uniview, Dahua) white-label through Singapore distributors (Heimdal Defence) to local integrators (GSP) — 3-57x markup common
+- Lesson: TKDN compliance is critical for Indonesian government procurement — always check TKDN status early in vendor evaluation
+
+### ARSENAL Product Alternative Research (2026-07-16)
+- Completed second research phase: solve 15 problematic products + enrich 7 non-problematic products = 22/22
+- **Potential savings: Rp 32.6 Miliar** via OEM Direct Procurement (5 products: P16 Rp 9.0B, P11 Rp 7-11B, P15 Rp 5.8B, P13 Rp 3.6B, P12 Rp 3.5B)
+- **TKDN roadmap:** 22.7% (Y0) → 90.9% (Y4) via hybrid procurement + local assembly + manufacturer partnership
+- **UU PDP compliance gaps** identified for 4 biometric products (P13/P15/P16/P18) — DPIA + DPO + consent mechanism needed
+- **Key insight: Value justification > hard budget cap** — user prefers flexibility to justify feature value over rigid 15% cap
+- **Key insight: Phase separation effective** — separating problematic from enrichment products yields more focused output
+- **Key insight: Task-architect table format critical** — Step/Agent/DependsOn table format is far more executable than narrative format
+- Lesson: Multi-pass research looping (no cap on passes) adds significant depth — 2-3 passes per product recommended
+- Lesson: Documentation accountability (delegation_progress_report.md after each step) enables session resumability after interruption
+- Lesson: Controller-friendly format matters — narrative blueprints are hard to execute; table-based blueprints with explicit Depends On chains are directly executable
+
+### ARSENAL R3 — Component Decomposition (2026-07-16)
+- 6D vendor scoring adds significant depth beyond base price — critical for defense procurement
+- TKDN 3-track model (native + assembly + SDK) achieves 77.3% compliance from 22.7% baseline
+- Component-level analysis reveals hidden costs: I/O boards sold separately (P20), HDD surge +46%
+- Cross-product synthesis is where the real value is — standardization savings only visible at aggregate
+- Per-product sequential loop confirmed effective across 3 research cycles (no hallucination)
+- OEM identification enables direct procurement bypass (saves Rp 10-15B from 3-38x markup)
+- Documentation accountability contract enables session resumability across complex multi-loop tasks
+
+### Orchestration Issue Analysis (2026-07-16)
+- Diagnosed 9 orchestration defects across 3 agents (RT, TA, MC) from GSP Arsenal R1-R3 runs
+- **28 atomic fix contracts** in 2-wave implementation plan (Wave 0: 16 parallel, Wave 1: 12 sequential)
+- **Wave 0 COMPLETE (2026-07-17):** TA (11 changes), RT (4 changes), AGENTS.md (1 change) — all verified PASS
+- **Wave 1 COMPLETE (2026-07-17):** MC (12 changes to `master-controller.md`) — 12 fix contracts applied bottom-to-top: schema version check (MC-8C), enforcement checklist additions (MC-7C, MC-9D), two-phase documentation lifecycle (MC-9A), memory persistence in final report (MC-9B), controller-friendliness quality gate (MC-8B), PRE-HIL validation V1-V7 (MC-8A), BLUEPRINT_APPROVAL gate (MC-7A), blueprint sign-off classification (MC-7D), blueprint trigger phrases (MC-7B), Step 4 memory persistence (MC-9C), post-synthesis memory note (MC-9E)
+- **Root cause #1: TA batching** — "3-7 subtasks" range permits multi-task batching, causing hallucination across all R1-R3 runs. Fix: replace with atomicity rule.
+- **Root cause #2: TA narrative output** — template is 96.7% narrative; table format (proven critical in R2) is buried as subsection. Fix: enforce Step|Agent|DependsOn table-first format.
+- **Root cause #3: MC Quality Gate fires too late** — validates 02_structured AFTER it's been used, not before HIL gate. Fix: add PRE-HIL VALIDATION step.
+- **Root cause #4: MC zero memory persistence** — Documentation Lifecycle covers /docs only; knowledge lost after each session. Fix: add mandatory memory write at task completion.
+- **Critical implementation order:** TA changes (Wave 0) must complete before MC changes (Wave 1) to avoid infinite re-delegation loops.
 
 ### Comprehensive Research Flow Enhancement (2026-07-09)
 1. **task-architect is a design agent, NOT an execution agent.** The task-architect produces `identification/02_structured.md` (the delegation plan) but must NEVER modify application files, agent configs, or any file outside `/docs/`. File modifications are delegated by the master controller to `coder-execution` or appropriate executor agents.

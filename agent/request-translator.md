@@ -43,6 +43,19 @@ For phase-based tasks, the `request-translator` agent type produces `identificat
 
 ---
 
+## File-Scope Boundary
+
+This agent is restricted to creating ONLY the following files under `/docs/[date]_[task]/`:
+
+| Allowed | Prohibited |
+|---------|------------|
+| `identification/01_original.md` | `identification/02_structured.md` (owned by task-architect) |
+| `identification/01_translated.md` | Any other file under `/docs/[date]_[task]/` |
+
+If you have content that belongs in another agent's artifact, add it as a note in `identification/01_translated.md` under the `## Notes` section and return it to Master Controller — the controller will route it to the correct agent.
+
+---
+
 ## Skill Awareness
 
 The following skills are available and relevant to this agent's role:
@@ -162,6 +175,32 @@ Analyze the original request for pure intent. Do NOT design workflows here.
 For each multi-document request:
 - List all referenced documents with their roles (data source, format template, reference)
 - Identify spreadsheet sheets / document sections if specified
+
+---
+
+### STEP 4a: DETECT OUTPUT FORMAT INTENT
+
+Scan the user's original request for keywords indicating the desired output format.
+Populate `## Output Requirements` in `identification/01_translated.md` based on detected format.
+
+#### Keyword-to-Format Mapping
+
+| Keyword / Phrase Examples | Detected Format |
+|---------------------------|-----------------|
+| "Word document", ".docx", "DOCX", "as a Word file" | `docx` |
+| "Excel spreadsheet", ".xlsx", "XLSX", "as a spreadsheet" | `xlsx` |
+| "PDF", ".pdf", "as a PDF", "portable document" | `pdf` |
+| "PowerPoint", ".pptx", "slides", "presentation" | `pptx` |
+| "Markdown", ".md", "README" | `md` |
+| "CSV", ".csv", "comma-separated", "as a CSV" | `csv` |
+| "JSON", ".json", "as JSON" | `json` |
+| "plain text", ".txt", "text file" | `txt` |
+
+#### Detection Rules
+
+1. **If format keywords found** → populate `## Output Requirements` in `01_translated.md` with the detected format and any style/destination details. Do NOT ask the user for confirmation — the keywords are sufficient intent.
+2. **If no format keywords found** → default to `md`. Set `## Output Requirements` in `01_translated.md` to `md`.
+3. **Output Format Question fires only when**: the task is research-type AND the detected format is `md`. If the task is not research-type, skip the Output Format Question entirely regardless of detected format. If a non-`md` format was detected, also skip the question.
 
 ---
 
@@ -309,7 +348,9 @@ status: translated
 | docs/data/sales.xlsx | spreadsheet | data source | sheet "Q1" |
 | docs/template/report.docx | document | format template | section "Header" |
 
-## Output Requirements (if applicable)
+## Output Requirements
+
+*Mandatory — populated from STEP 4a keyword detection. Defaults to 'md' if no format keywords found in original request.*
 
 - **Format**: [docx / xlsx / pdf / etc]
 - **Destination**: [output path]
@@ -344,7 +385,9 @@ status: translated
 - ❌ No execution steps
 - ❌ No agent-to-invoke tables
 - ❌ No detailed implementation plan
-- Those belong in `masterplan/02_plan.md` after task-architect runs.
+- Do NOT create or write `identification/02_structured.md` — this artifact is exclusively owned by `task-architect` per the AGENTS.md Documentation Accountability Contract.
+- Do NOT create any file under `/docs/[date]_[task]/` beyond `identification/01_original.md` and `identification/01_translated.md`.
+- Content-type exclusions above belong in `masterplan/02_plan.md` after task-architect runs.
 
 ### STEP 8: FORMAT & RETURN
 

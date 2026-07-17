@@ -226,7 +226,7 @@ Use agent type rather than specific agent variant in accountability mappings. A 
 | `controller` | Owns folder creation, gate checks, delegation prompts, status updates, final synthesis, and user-facing reporting. |
 | `domain-controller` | Coordinates domain-specific workflows such as PM/BA, documentation, or trading while preserving the centralized documentation contract. |
 | `request-translator` | Produces `identification/01_translated.md` and preserves the original request. |
-| `task-architect` | Produces `identification/02_structured.md` and may contribute to `masterplan/01_specs.md` and `masterplan/02_plan.md`. |
+| `task-architect` | Produces `identification/02_structured.md` including a mandatory `## Recommendation & Next-Plan Summary` section; may contribute to `masterplan/01_specs.md` and `masterplan/02_plan.md`. |
 | `explore` | Produces `research/01_explore.md`. |
 | `data-collector` | Produces `research/02_collection.md`. |
 | `data-analyst` | Produces `research/03_analysis.md` and, when assigned to the spec phase, `masterplan/01_specs.md`. |

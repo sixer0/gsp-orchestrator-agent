@@ -19,12 +19,26 @@
 - **Path:** `/Users/mbp/Documents/Project/ARSENAL/`
 - **Kontraktor:** PT Gemilang Satria Perkasa (GSP)
 - **Partner:** Heimdal Defence Pte Ltd (Singapore)
-- **Phase:** Riset 1 (Base Knowledge) + Riset 2 (Product Alternatives) + Riset 3 (Component & Vendor) ALL COMPLETE
+- **Phase:** R1-R4 COMPLETE | R5 COMPLETE (17 Jul 2026) | R6-R7 PLANNED
 - **Top-level Index:** `docs/README.md` (mulai dari sini)
 - **Knowledge Base:** `docs/2026-07-15_arsenal_product_knowledge_compilation/`
 - **Alternative Research:** `docs/2026-07-15_arsenal_product_alternative_research/`
 - **Deep Reference:** `memory/refs/arsenal-product-research.md`
-- **Key Metrics:** 22 produk, Rp 32.6B potential savings, 21 PASS + 1 CAUTION gates
+- **R5 Architecture:** `memory/refs/arsenal-r5-system-integration.md`
+- **Next Plan:** `nextplan.md` (updated post-R5)
+- **Key Metrics:** 22 produk, Rp 38-46B revised budget, 11 dims architecture, CONDITIONAL GO
+- **CRITICAL FINDINGS (R5 System Integration):**
+  - **CONDITIONAL GO** — 87/87 AC PASS, 45/45 consistency pairs
+  - **Total system power:** 11,831W typ / 25,802W max (83.9% headroom)
+  - **Total cable:** 29,977m (187% of 16,000m baseline)
+  - **Bandwidth:** 5,735 Mbps aggregate, 0 bottlenecks
+  - **LOCAL-FIRST 87%** — Verihubs 0% critical dependency
+  - **5-level data sovereignty** — 3 air-gapped segments, 12 cloud controls
+  - **ONVIF/REST/SNMP abstraction** — vendor lock-in LOW
+  - **Installation:** 174-214 days, NRE $50K-100K
+  - **P22 SDPPI = DEAL-BREAKER** — Rp 50-150M, 8-10 weeks
+  - **Hidden costs revealed:** 61× encoder boards + 61× DC PSU for P11
+  - Deep Reference: `memory/refs/arsenal-r5-system-integration.md`
 - **CRITICAL FINDINGS (Riset 2):**
   - OEM Direct Procurement: **Rp 32.6 Miliar savings** (8 produk markup tinggi)
   - TKDN: 5/22 native (22.7%) → roadmap 90.9% dalam 5 tahun
@@ -40,8 +54,8 @@
   - 4 produk UU PDP non-compliant (P13/P15/P16/P18)
   - 40+ HS codes identified, >85% BM 0% via ITA
   - Deep Reference: `memory/refs/arsenal-r3-component-vendor.md`
-- **STATUS:** Ketiga riset SELESAI — siap untuk procurement planning
-- **Next:** Procurement execution, UU PDP compliance, TKDN exemption, P21 datasheet request
+- **STATUS:** R1-R5 COMPLETE — siap R6 (TCO) + R7 (Competitive). P22 SDPPI harus dimulai SEKARANG.
+- **Next:** R6 TCO (full data dari R5), R7 Competitive (3-layer differentiator), P22 SDPPI type-approval (8-10 weeks)
 
 ## Task Reports
 
@@ -50,6 +64,7 @@
 | 2026-07-16 | [Orchestration Issue Analysis](memory/tasks/2026-07-16-orchestration-issue-analysis.md) | COMPLETE | `docs/2026_07_16_orchestration_issue_analysis/` |
 | 2026-07-16 | [ARSENAL Product Alternative Research](memory/tasks/2026-07-16-arsenal-product-alternative-research.md) | COMPLETE | `docs/2026-07-15_arsenal_product_alternative_research/` |
 | 2026-07-16 | [ARSENAL Component & Vendor Research](memory/tasks/2026-07-16-arsenal-component-vendor-research.md) | COMPLETE | `docs/2026-07-16_arsenal_component_vendor_research/` |
+| 2026-07-17 | [ARSENAL R5 System Integration](memory/tasks/2026-07-16-arsenal-r5-system-integration.md) | COMPLETE | `docs/2026-07-16_arsenal_r5_system_integration/` |
 | 2026-07-15 | [ARSENAL Product Knowledge Base](memory/tasks/2026-07-15-arsenal-product-knowledge.md) | COMPLETE | `docs/2026-07-15_arsenal_product_knowledge_compilation/` |
 | 2026-07-09 | [Comprehensive Research Flow](memory/tasks/2026-07-09-comprehensive-research-flow.md) | COMPLETE | — |
 | 2026-06-12 | [E-commerce Phase 2](memory/tasks/2026-06-12-ecommerce-phase2-complete.md) | COMPLETE | `E:\Projects\e-commerse` |
@@ -77,6 +92,16 @@
 - Updated task architecture and analyst planning rules so `data-analyst` creates the canonical `masterplan/01_specs.md` when assigned to the spec phase.
 - Updated `AGENTS.md`, `agent/data-analyst.md`, `agent/pm-planner.md`, and `agent/task-architect.md` so the masterplan flow is: research/analysis → `masterplan/01_specs.md` → `masterplan/02_plan.md`.
 - Lesson: `pm-planner` should consume the canonical spec artifact instead of planning implementation from analysis alone when formal specs are required.
+
+### ARSENAL R5 System Integration Architecture (2026-07-17)
+- **11-dimension architecture** for 22 IDS perimeter products on 337 hectares
+- **CONDITIONAL GO** — 87/87 AC PASS, P22 SDPPI is deal-breaker
+- **Key metrics:** 11,831W typ, 29,977m cable, 5,735 Mbps bandwidth, 86% rack utilization
+- **Data sovereignty enforced:** LOCAL-FIRST 87%, 3 air-gapped segments, 5-level classification, 12 cloud controls
+- **Maintainability enforced:** ONVIF/REST/SNMP abstraction, 24 swap procedures, 5-10yr lifecycle
+- **Hidden costs revealed:** 61× FLIR encoder boards + 61× Axis DC PSU + 29,977m cable (187% over baseline)
+- **Lesson:** Blueprint v2 insufficient — user demanded peta assignment delegasi (99-step table). Blueprint v3 with full delegation map = correct format for complex multi-dimension research.
+- **Lesson:** Data sovereignty as mandatory constraint adds design depth but is essential for military IDS. Maintainability layer prevents vendor lock-in for 5-10 year lifecycle.
 
 ### E-commerce App Development (2026-06-12)
 - **Phase 0 (Foundation):** Monorepo, NestJS backend skeleton, Next.js frontend, Prisma + SQLite, design system primitives, CI/CD — COMPLETE (`f2e17b9`)

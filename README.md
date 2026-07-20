@@ -1,6 +1,6 @@
 # GSP Orchestrator Agent
 
-Multi-agent orchestration configuration repository for the Kilo runtime. Contains 51 agent definitions, 42 specialized skill modules, 18 custom commands, and a complete phase-accountable workflow for automated software development, research, and documentation.
+Multi-agent orchestration configuration repository for the Kilo runtime. Contains 51 agent definitions, 43 specialized skill modules, 18 custom commands, and a complete phase-accountable workflow for automated software development, research, and documentation.
 
 ## Overview
 
@@ -65,6 +65,19 @@ Every task is classified into one of 7 scale categories at the identification ph
 ### Checkpoint Feedback Loops
 
 Every verification step (code review, security review, cross-reference validation) has defined re-route paths. If a review finds issues, the system does not simply flag them -- it routes the task back to the appropriate agent with specific remediation instructions and re-verifies. The loop is bounded to 3 cycles before escalation.
+
+### Document Quality Standards
+
+A centralized `document-quality-standards` skill (1419 lines, 10 modules) serves as the single source of truth for all document agents. Modules cover document classification (8 types), independence tiers, information processing, writing principles, depth control, quality validation, reference handling, anti-AI writing standards (GSP company style), and document formatting/styling (Indonesian professional docs). Agents load only relevant modules to keep context lean.
+
+### Parallel Delegation Safety
+
+The orchestrator-worker skill enforces parallel output isolation to prevent file-level race conditions when multiple agents execute concurrently:
+
+- **Per-agent output partitioning**: Agents write to `delegation_progress/<agent>.md` instead of shared files
+- **Controller-mediated writes**: `delegation_progress_report.md` and `status_tasks.md` are controller-owned only
+- **Concurrency limits**: Max 2 parallel tasks per same agent type, max 4 total across different agent types
+- **Immutable snapshots**: Shared artifacts are cached during refinement to prevent TOCTOU races
 
 ### Professional Document Output
 
@@ -223,6 +236,7 @@ User Request
 | `document-reviewer` | Subagent | Review and revise documents |
 | `document-reviewer-local` | Subagent | Local fallback for document review |
 | `document-translator` | Subagent | Parse and structure document requests |
+| `document-translator-local` | Subagent | Local fallback for document translation |
 | `document-analyst` | Subagent | Assess document quality and relevance |
 | `document-analyst-local` | Subagent | Local fallback for document analysis |
 
@@ -249,10 +263,10 @@ User Request
 
 | Property | Value |
 |----------|-------|
-| Total agent files | 51 |
+| Total agent files | 52 |
 | Primary agents | 5 (master, pm-controller, pm-controller-local, document-controller, document-controller-local) |
 | Subagent pairs (primary + local) | 17 pairs (34 files) |
-| Standalone subagents | 5 (request-translator, task-architect, explore, data-collector, image-analyst, image-analyst-local, document-translator) |
+| Standalone subagents | 6 (request-translator, task-architect, explore, data-collector, document-translator, document-translator-local, image-analyst, image-analyst-local) |
 | Default built-in agents | 5 (ask, plan, debug, orchestrator, code) |
 
 ## Skills
@@ -263,7 +277,7 @@ Skills extend agent capabilities without repeating workflow logic in prompts. Th
 
 | Skill | Purpose |
 |-------|---------|
-| `orchestrator-worker` | Delegate complex tasks to specialist sub-agents |
+| `orchestrator-worker` | Delegate complex tasks to specialist sub-agents (with parallel output isolation) |
 | `plan-and-execute` | Decompose tasks into staged, dependency-aware execution plans |
 | `checkpoint-resume` | Persist workflow state at checkpoints for interrupt/resume |
 | `self-healing-loop` | Classify and recover from execution failures |
@@ -311,6 +325,7 @@ Skills extend agent capabilities without repeating workflow logic in prompts. Th
 | `pdf` | PDF reading and manipulation |
 | `pptx` | PowerPoint presentation generation |
 | `xlsx` | Excel spreadsheet reading and manipulation |
+| `document-quality-standards` | Centralized document quality standards (10 modules: classification, writing, formatting, anti-AI) |
 | `content-research-writer` | Research-backed content writing with citations |
 | `canvas-design` | Visual art creation in PNG and PDF |
 | `image-enhancer` | Image resolution, sharpness, and clarity enhancement |

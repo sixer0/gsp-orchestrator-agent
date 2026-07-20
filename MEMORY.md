@@ -68,6 +68,7 @@
 | 2026-07-15 | [ARSENAL Product Knowledge Base](memory/tasks/2026-07-15-arsenal-product-knowledge.md) | COMPLETE | `docs/2026-07-15_arsenal_product_knowledge_compilation/` |
 | 2026-07-09 | [Comprehensive Research Flow](memory/tasks/2026-07-09-comprehensive-research-flow.md) | COMPLETE | — |
 | 2026-06-12 | [E-commerce Phase 2](memory/tasks/2026-06-12-ecommerce-phase2-complete.md) | COMPLETE | `E:\Projects\e-commerse` |
+| 2026-07-20 | [Document Quality Standards](memory/tasks/2026-07-20-document-quality-standards.md) | COMPLETE | `docs/2026_07_20_document_quality_standards/` |
 | 2026-05-17 | [Kilo Workflow Setup](memory/tasks/2026-05-17-kilo-workflow-setup.md) | COMPLETE | — |
 
 ## Recent Activities
@@ -130,6 +131,39 @@
   - Wrote Puppeteer UAT simulation → 5/5 steps pass.
   - All changes committed and apps running in background.
 - **Previous session:** UI/UX redesign for Certification Marketplace using Tailwind CSS and React-native interactions; committed and pushed to GitHub (master branch).
+
+### Document Quality Standards Implementation (2026-07-20)
+- Created centralized `document-quality-standards` skill (620 lines, 7 modules: A-G)
+- Updated 12 document agent files + 1 skill file across 3 waves (14 files total)
+- **56 quality gaps identified** → reduced to ~5 minor gaps
+- **Architecture:** Skill-first approach (single source of truth) + modular loading (agents load only relevant modules)
+- **Key routing:** document-translator = single classification gate (8 content types × 6 independence tiers × 7 audiences)
+- **Quality gate:** Controller enforces 10-point internal + 6-point external checklists before user approval
+- **External document workflow:** Separate path with stricter gates for Tier 2+ documents
+- **Agent coverage:** translator, writer, reviewer, analyst, controller, pm-writer, reader, content-research-writer (all updated)
+- **Lesson:** Centralized skill > duplicated rules across agents — maintenance nightmare avoided
+- **Lesson:** Wave-based implementation (P0→P1→P2) effective for incremental delivery with verification gates
+- **Lesson:** Local variant mirroring must be explicit step — forgetting creates parity drift
+
+### Document Quality Standards v1.1 — Anti-AI Enhancement (2026-07-20)
+- **Module H added** (~350 lines) to `document-quality-standards` skill — Anti-AI Writing Standards
+- Analyzed 3 GSP company documents (Proposal, Kajian Teknis, Deep Research) for writing patterns
+- Key findings: GSP style uses long sentences (30-45 words avg), "Kami" institutional voice, confidence labels [WEB]/[ANALISIS]/[ESTIMASI], Indonesian number format (dot thousands), natural EN/ID code-switching, honest limitation statements
+- **8 sub-modules:** H1 (Voice Profile), H2 (Sentence Rules), H3 (Paragraph Rules), H4 (Vocabulary), H5 (Anti-AI Patterns), H6 (AI Patterns to Avoid), H7 (Number Formatting), H8 (Opening/Closing)
+- Updated 7 agent Skill Awareness sections to reference Module H
+- Skill now 1022 lines (was 620), version bumped to v1.1
+- **Lesson:** Company document style is highly specific — long sentences, defense jargon, honest hedging, confidence labeling. Generic AI output (short sentences, marketing tone, no hedging) is the opposite.
+- **Lesson:** Anti-AI writing requires enforcing specific patterns (not just avoiding AI patterns) — the "bukan X, melainkan Y" contrast, "Kami" voice, and confidence labels are positive patterns to inject.
+
+### Document Quality Standards v1.2 — Formatting & Styling (2026-07-20)
+- **Module I added** (~400 lines) to `document-quality-standards` skill — Document Formatting & Styling Standards
+- Based on formatting patterns extracted from 3 GSP company documents
+- **10 sub-modules:** I.1 (Document Structure & Hierarchy), I.2 (Number & Data Formatting), I.3 (Table Formatting), I.4 (Figure & Image Formatting), I.5 (List Formatting), I.6 (Cross-Reference Format), I.7 (Classification & Document Marking), I.8 (Typography & Styling), I.9 (Markdown Output), I.10 (DOCX Output)
+- Key formatting rules: Indonesian number format (dot thousands, comma decimals), cover page template, formal letter format, heading hierarchy (BAB X - TITLE), table/figure numbering, classification marking
+- Updated agent loading table to include Module I for writer, reviewer, pm-writer
+- Skill now 1419 lines (was 1022), version bumped to v1.2
+- **Lesson:** Formatting standards must cover both Markdown and DOCX output — agents produce both formats
+- **Lesson:** Cover page and formal letter templates are essential for professional Indonesian documents
 
 ### GSP Orchestration Project DOCX — Batch 5 Complete (2026-07-10)
 - **Chapter 5 (Analisis Dua Jalur Orkestrasi)** appended to existing DOCX document
@@ -211,3 +245,12 @@
 3. Added "Design vs Execution Boundary" section to `task-architect.md` with explicit MAY/MUST NOT rules.
 4. Added "Post-Research Handoff Protocol" section to `master-controller.md` showing the delegation chain.
 5. Added 7 canonical external research dimensions (Technology Trends, Technology Evaluation, Vendor Evaluation, Market Share, Regulatory, Competitive Landscape, Industry Trends) to 12 agent files.
+
+### Document Quality Standards (2026-07-20)
+1. **Centralized skill > duplicated rules:** Creating one `document-quality-standards` skill and having agents load relevant modules avoids maintenance nightmare of updating 8+ agent files when standards change.
+2. **Modular loading essential:** Skill with 7 modules (~620 lines) would overwhelm context if loaded in full by every agent. Selective module loading (e.g., translator loads A+B only, writer loads D+E+F) keeps context lean.
+3. **Translator as single routing gate:** Concentrating classification intelligence (content type, independence tier, audience) in document-translator means downstream agents don't need to re-classify — they just execute per routing.
+4. **Quality gate at controller level:** Enforcing quality validation at the orchestrator level (not individual agents) ensures consistency — controller verifies checklist was run before allowing user approval.
+5. **Wave-based delivery effective:** P0 (skill + 3 core agents) → P1 (analyst + controller) → P2 (pm-writer + reader + content-research-writer) allowed incremental verification and prevented scope creep.
+6. **Local variant mirroring must be explicit:** Forgetting to mirror primary agent changes to local variants creates parity drift and breaks fallback reliability. Always include local mirroring as a dedicated step.
+7. **Additive changes only:** All agent updates preserved existing good patterns (template-aware creation, image insertion safety, penalty enforcement, etc.) — only added new sections without removing anything.

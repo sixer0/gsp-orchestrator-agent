@@ -374,6 +374,78 @@ Record the assignment:
 | Overlap detected? | Merge the subtasks, split the overlap into a separate subtask, or reassign one to a different agent |
 | All overlaps resolved? | Proceed to execution |
 
+### Phase 0d: Parallel Output Isolation (MANDATORY for Parallel Execution)
+
+When two or more subtasks execute in parallel (same dependency level), the orchestrator MUST enforce output isolation to prevent file-level race conditions.
+
+**Why this matters:**
+- Multiple agents writing to the same file simultaneously causes silent data loss (last-writer-wins)
+- `delegation_progress_report.md`, `status_tasks.md`, and shared phase artifacts are all vulnerable
+- The Documentation Contract requires ALL agents to update shared files — without isolation, parallel writes overwrite each other
+
+**Isolation Rules:**
+
+| Rule | Description |
+|------|-------------|
+| **R1: Per-agent progress files** | Each parallel agent writes to `delegation_progress/<agent_name>.md` instead of `delegation_progress_report.md`. The controller synthesizes the master report after all agents complete. |
+| **R2: Controller-owned shared files** | `status_tasks.md` and `delegation_progress_report.md` are WRITTEN ONLY by the controller. Sub-agents return status data in their response — they do NOT write to these files directly. |
+| **R3: Per-agent phase artifacts** | When two agent types are authorized to produce the same phase artifact (e.g., `data-analyst` and `pm-analyst` both writing `research/03_analysis.md`), each writes to a per-agent variant: `research/03_analysis_<agent_type>.md`. The controller merges after both complete. |
+| **R4: No shared write targets** | Before parallel execution, scan all subtask Expected Output paths. If any two subtasks target the SAME file, either split the output (per-agent naming) or serialize the subtasks. |
+| **R5: Immutable reads during refinement** | When the controller refines a shared artifact (e.g., `identification/02_structured.md`) while other agents need to read it, the controller caches the current version and provides it to readers. No agent reads a file that is actively being written. |
+| **R6: Concurrency limits** | Max 2 parallel tasks for the same agent type. Max 4 parallel tasks total across all agent types. If more tasks are needed, batch them into sequential groups respecting these limits. |
+
+**Pre-Parallel Checklist (MANDATORY before executing parallel subtasks):**
+```
+[ ] All parallel subtask output paths are unique (no two subtasks write to the same file)
+[ ] delegation_progress_report.md is controller-owned only (agents write to delegation_progress/<agent>.md)
+[ ] status_tasks.md is controller-owned only (agents report status in response, not via file write)
+[ ] If shared phase artifacts exist (03_analysis.md, 02_plan.md), per-agent variants are assigned
+[ ] If a shared artifact is being refined, readers receive a cached snapshot
+[ ] Concurrency limits respected: max 2 same-agent, max 4 total different-agent
+```
+
+**Post-Parallel Synthesis (MANDATORY after all parallel subtasks complete):**
+```
+[ ] Read all delegation_progress/<agent>.md files
+[ ] Synthesize delegation_progress_report.md from per-agent files
+[ ] Merge per-agent phase artifacts into canonical files (if applicable)
+[ ] Update status_tasks.md with consolidated parallel progress
+[ ] Verify all per-agent files are present before synthesis
+```
+### Phase 0d.1: Concurrency Enforcement
+
+Server capacity limits impose hard constraints on parallel execution. The controller MUST enforce these limits before launching any parallel batch.
+
+**Hard Limits:**
+
+| Condition | Max Concurrent | Action if Exceeded |
+|-----------|---------------|-------------------|
+| Same agent type (e.g., 2× `coder-execution`) | **2** | Serialize: run one, wait for completion, then launch the next |
+| Different agent types (e.g., `explore` + `data-collector` + `verifier` + `test-expert`) | **4** | Split into waves: first 4, then remaining after first wave completes |
+
+**Batching Strategy:**
+
+When the orchestration plan has more parallel tasks than the limits allow:
+
+```yaml
+# Example: 6 parallel subtasks (3× coder-execution, 1× explore, 1× verifier, 1× test-expert)
+# Limit check: 3× coder-execution EXCEEDS max 2 same-agent → must split
+
+Wave_1: [coder-execution-A, coder-execution-B, explore, verifier]  # 4 total, 2× coder = OK
+Wave_2: [coder-execution-C, test-expert]                          # 2 total, 1× coder = OK
+
+# Wave_2 starts only after ALL Wave_1 tasks complete
+```
+
+**Enforcement Checklist:**
+```
+[ ] Count total parallel tasks planned
+[ ] Count per-agent-type tasks planned
+[ ] If same-agent count > 2: split into waves (max 2 per wave per agent type)
+[ ] If total count > 4: split into waves (max 4 per wave total)
+[ ] Document wave assignment in orchestration plan
+[ ] Verify Wave_2 tasks depend on Wave_1 completion (DAG updated)
+```
 ---
 
 ### Phase 2: Execute Workers
@@ -383,6 +455,7 @@ Run subtasks respecting dependency order:
 1. Identify all subtasks with satisfied dependencies (ready set)
 2. **For split tasks: Read previous checkpoint before starting**
 3. Execute ready subtasks (sequentially or logically in parallel)
+   **Parallel execution requirement:** When executing subtasks in parallel, each subtask MUST write to unique output files (see Phase 0d). The controller MUST NOT launch parallel subtasks that share a write target.
 4. Collect outputs and log completion
 5. **Write checkpoint artifact (for split tasks or tasks with dependents)**
 6. Update dependency graph — mark completed subtasks as done
@@ -559,6 +632,11 @@ orchestration_plan:
 | **No checkpoint between split tasks — losing state** | **Write checkpoint after each subtask; next task reads checkpoint before starting** |
 | **Assuming split tasks are independent without verifying continuity** | **Run integrity check: verify imports resolve, interfaces match, state transfers are consistent** |
 | **Not documenting decisions in split tasks** | **Each checkpoint includes `decisions_made` and `state_for_next` so context isn't lost** |
+| **Multiple parallel agents writing to the same shared file** | **Agents write to per-agent output files; controller synthesizes shared files after all agents complete** |
+| **Sub-agents writing directly to `delegation_progress_report.md` or `status_tasks.md`** | **Sub-agents return status/progress in their Task() response; controller writes shared files** |
+| **Reading an artifact that is being actively refined by another agent** | **Controller caches snapshot before refinement; provides cached version to readers** |
+| **Parallel execution without scanning output paths for conflicts** | **Pre-parallel checklist: verify all output paths are unique before launching parallel subtasks** |
+| **Launching more than 4 parallel subtasks or more than 2 tasks with the same agent type** | **Respect concurrency limits: max 2 per agent type, max 4 total. Batch excess tasks into sequential waves.** |
 
 ---
 
@@ -587,6 +665,10 @@ orchestration_plan:
 [ ] Verify: If frontend+backend, contract conformance is confirmed
 [ ] Verify: CONTEXT INTEGRITY — All checkpoints present and consistent
 [ ] Verify: No subtask exceeded token threshold (or was properly split)
+[ ] Phase 0d: Parallel output isolation enforced (all output paths unique)
+[ ] Phase 0d: Per-agent delegation_progress files created
+[ ] Phase 0d: Controller-owned shared files (status_tasks.md, delegation_progress_report.md) not written by agents
+[ ] Phase 2: Post-parallel synthesis completed (per-agent files merged into shared files)
 ```
 
 ---

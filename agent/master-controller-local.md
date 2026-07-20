@@ -144,13 +144,60 @@ Every delegated sub-agent MUST write documentation before it can be considered c
 ```
 Documentation Contract:
 - Write all task artifacts to /docs/[date]_[task]/ using AGENTS.md naming conventions.
-- Create or update delegation_progress_report.md after each milestone, blocker, approval, checkpoint, or final result.
-- Your final response must list every file you created or updated under /docs.
+- IMPORTANT: For PARALLEL delegation, do NOT write to shared files (delegation_progress_report.md, status_tasks.md).
+  Instead: Write to /docs/[date]_[task]/delegation_progress/<your_agent_name>.md
+  The controller will synthesize shared files after all parallel agents complete.
+- For SEQUENTIAL delegation, you may update delegation_progress_report.md directly.
+- Your final response must include:
+  - Explicit status: complete, blocked, or needs-review
+  - List of files you created or updated
+  - Any milestones, blockers, or decisions (for controller to write to shared files)
 - If you cannot write to /docs, return BLOCKED:DOCS_UNAVAILABLE with the reason.
-- Do not claim completion unless the required docs and delegation_progress_report.md exist.
+- Do not claim completion unless the required docs exist.
 ```
 
 You MUST enforce this contract by reading the returned delegation progress report and the corresponding `/docs` files before moving to the next agent. If required docs are missing, malformed, or not listed, do not proceed. Re-delegate to the same agent to write or repair the missing documentation. Only synthesize a final response after every active sub-agent has either produced docs or returned a documented blocker.
+
+**3. PARALLEL DELEGATION OUTPUT ISOLATION**
+
+When delegating multiple sub-agents in parallel (e.g., Step B.7: "Delegate to `explore` and `data-collector` information gathering in paralel"), the controller MUST enforce output isolation:
+
+**Before launching parallel agents:**
+1. Scan all expected output paths for the parallel agents
+2. If any two agents target the SAME file, split the output using per-agent naming:
+   - `delegation_progress_report.md` → agents write to `delegation_progress/<agent_name>.md`
+   - `research/03_analysis.md` → `research/03_analysis_<agent_type>.md`
+   - `masterplan/02_plan.md` → `masterplan/02_plan_<agent_type>.md`
+3. Ensure `status_tasks.md` is written ONLY by the controller (agents report status in their response)
+
+**After all parallel agents complete:**
+1. Read all `delegation_progress/<agent>.md` files
+2. Synthesize `delegation_progress_report.md` from per-agent files
+3. Merge per-agent phase artifacts into canonical files (if applicable)
+4. Update `status_tasks.md` with consolidated progress
+5. Verify all per-agent files exist before synthesis
+
+**Shared file ownership rules:**
+| File | Owner | Agent Access |
+|------|-------|-------------|
+| `delegation_progress_report.md` | Controller ONLY | Agents write to `delegation_progress/<agent>.md` |
+| `status_tasks.md` | Controller ONLY | Agents return status in Task() response |
+| `research/03_analysis.md` | Controller (synthesis) | `data-analyst` → `03_analysis_data-analyst.md`; `pm-analyst` → `03_analysis_pm-analyst.md` |
+| `masterplan/02_plan.md` | Controller (synthesis) | `pm-planner` → `02_plan_pm-planner.md`; `data-analyst` → `02_plan_data-analyst.md` |
+| `research/01_explore.md` | `explore` (single writer) | No parallel explore instances without per-scope naming |
+| `identification/02_structured.md` | `task-architect` (single writer) | Controller caches snapshot during refinement; provides to readers |
+
+**Concurrency Limits (server capacity):**
+
+| Condition | Max | Action if Exceeded |
+|-----------|-----|-------------------|
+| Same agent type in parallel | **2** | Serialize: run one, wait, then next |
+| Total different agent types in parallel | **4** | Split into waves; Wave_2 starts after Wave_1 completes |
+
+When the structured task breakdown has more parallel steps than these limits allow, batch them into sequential waves:
+- Wave 1: First batch (max 4 total, max 2 per agent type)
+- Wave 2: Second batch (depends on Wave 1 completion)
+- Update Depends On chain accordingly
 
 **Sub-Agent Completion Gate**
 
@@ -162,6 +209,12 @@ A sub-agent task is not complete until the master controller verifies all of the
 5. No required checkpoint, approval, or verification document is missing.
 
 If any check fails, mark the sub-agent as `INCOMPLETE_DOCS_MISSING` and re-delegate to the same agent with the missing document paths. Do not advance the workflow, ask for approval, or report completion until the gate passes.
+
+**Parallel delegation gate addition:**
+When agents were delegated in parallel, the controller MUST also verify:
+6. All `delegation_progress/<agent>.md` files exist (one per parallel agent)
+7. Per-agent phase artifacts exist (if applicable)
+8. No two agents wrote to the same file (scan for unexpected shared writes)
 
 **Phase Accountability Contract**
 

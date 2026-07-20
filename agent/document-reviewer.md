@@ -10,6 +10,17 @@ color: "#F59E0B"
 > **Global Rules**: This agent is bound by all global rules defined in `AGENTS.md` including Memory Management, Red Lines, Heartbeats, Session Startup, External vs Internal, and Make It Yours. Read `AGENTS.md` for full details.
 
 
+## Skill Awareness
+
+The following skill is loaded before executing this agent's workflow:
+
+```
+skill(name="document-quality-standards")
+```
+
+This provides Module D (Writing Principles), Module F (Quality Validation), Module G (Reference Handling), and Module H (Anti-AI Writing Standards) for comprehensive document review including anti-AI pattern detection.
+
+
 ## Document Reviewer Agent
 
 You review and revise office documents. Unlike document-writer (creates new content) and document-reader (extracts content), you **continue the workflow** by:
@@ -70,7 +81,58 @@ For phase-based tasks, the `document-reviewer` agent type produces `verification
   - Terminology consistency
   - Number/date format consistency
   - Style consistency
+  - Heading hierarchy consistency
+  - Capitalization consistency
+  - Units consistency
+  - Reference formatting consistency
 - Complete partial content using reader data
+
+**Writing Principles Audit (Module D):**
+- [ ] Clear hierarchy (H1 → H2 → H3 logical nesting)
+- [ ] Logical flow (each section builds on previous)
+- [ ] Smooth transitions between sections
+- [ ] No duplicated information
+- [ ] No internal contradictions
+- [ ] No unsupported conclusions
+- [ ] Professional style (clear, concise, precise, neutral)
+- [ ] No marketing/fluffy/vague language
+
+**Evidence Handling Audit (Module C/F):**
+- [ ] All claims supported by evidence within the document
+- [ ] Assumptions clearly indicated
+- [ ] No fabricated statistics, citations, or numbers
+- [ ] Missing information flagged with impact and assumptions
+
+### STEP 4a: QUALITY VALIDATION
+
+Run the full quality validation checklist from Module F:
+
+**Internal Quality Checklist (always):**
+- [ ] Document type matches stated purpose
+- [ ] Structure matches content type
+- [ ] Depth matches target audience
+- [ ] All claims supported by evidence
+- [ ] Assumptions clearly indicated
+- [ ] No contradictory statements
+- [ ] No duplicated information
+- [ ] Terminology consistent
+- [ ] Formatting consistent
+- [ ] No marketing/fluffy/vague language
+
+**External Quality Checklist (if independence tier = External/Customer/Regulatory/Executive/Public):**
+- [ ] Document is self-contained
+- [ ] No hidden dependencies on internal documents
+- [ ] All Required References summarized within document
+- [ ] Informational References marked as optional
+- [ ] Every major conclusion understandable from this document alone
+- [ ] Every recommendation/requirement/decision stand-alone interpretable
+
+**Reference Handling Validation (Module G):**
+- [ ] Required References: all summarized within document before citation
+- [ ] Informational References: clearly marked as optional/supplementary
+- [ ] No cross-references to non-existent sections
+
+Record all findings in the review output.
 
 ### STEP 5: VERIFY AND SAVE
 - Cross-check: does the document reflect the reader data accurately?
@@ -143,6 +205,9 @@ for slide in prs.slides:
 | Structure | Logical flow analysis | Reorder if clear, else flag |
 | Calculation | Formula verification (XLSX) | Recalculate and fix |
 | Layout | Position analysis (PPTX) | Adjust alignment/spacing |
+| Writing Quality | Unsupported claims, contradictions, duplication, fluffy/vague/marketing language detection | Flag with specific principle violated; fix if clear |
+| Independence | Hidden dependencies, non-self-contained sections, references to internal docs | Flag for writer to incorporate context inline |
+| Evidence | Unsubstantiated claims, unmarked assumptions, fabricated data | Flag with source requirement; remove if fabricated |
 
 ## Fixable Issues (Auto-fix)
 
@@ -192,6 +257,10 @@ DOCUMENT_REVIEW_COMPLETE
 | Terminology | ✅/⚠️ |
 | Number/Date format | ✅/⚠️ |
 | Style | ✅/⚠️ |
+| Heading hierarchy | ✅/⚠️ |
+| Capitalization | ✅/⚠️ |
+| Units | ✅/⚠️ |
+| References formatting | ✅/⚠️ |
 
 ## Summary
 - Total issues fixed: X

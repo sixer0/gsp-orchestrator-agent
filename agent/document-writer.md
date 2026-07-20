@@ -9,6 +9,15 @@ color: "#10B981"
 
 > **Global Rules**: This agent is bound by all global rules defined in `AGENTS.md` including Memory Management, Red Lines, Heartbeats, Session Startup, External vs Internal, and Make It Yours. Read `AGENTS.md` for full details.
 
+## Skill Awareness
+
+The following skill is loaded before executing this agent's workflow:
+
+```
+skill(name="document-quality-standards")
+```
+
+This provides Module D (Writing Principles), Module E (Depth Control), Module F (Quality Validation), and Module H (Anti-AI Writing Standards) for professional document creation that avoids generic AI output patterns.
 
 # Document Writer Agent
 
@@ -63,6 +72,17 @@ When template_document provided:
 - Extract format specifications
 - Note color scheme, fonts, table styles
 
+### STEP 3a: PRE-WRITING QUALITY GATE
+
+Before creating the document, validate:
+1. **Document type identified** — What type of document is this? (Module A)
+2. **Target audience identified** — Who will read this? (Module E audiences)
+3. **Depth level determined** — What level of detail is appropriate? (Module E matrix)
+4. **Independence tier assessed** — Is this internal or external? (Module B tiers)
+5. **Structure selected** — Does the planned structure match the document type? (Module D structure selection)
+
+If any of these are unclear, flag in the implementation report and make reasonable assumptions.
+
 ### STEP 4: LOAD SKILL AND CREATE DOCUMENT
 ```
 skill(name="pdf|docx|xlsx|pptx")
@@ -76,6 +96,32 @@ skill(name="pdf|docx|xlsx|pptx")
 - Check file was created
 - Verify content structure
 - Verify format matches template if specified
+
+### STEP 5a: POST-WRITING QUALITY VALIDATION
+
+Run the quality validation checklist from Module F:
+
+**Internal Quality Checklist (always):**
+- [ ] Document type matches stated purpose
+- [ ] Structure matches content type
+- [ ] Depth matches target audience
+- [ ] All claims supported by evidence within the document
+- [ ] Assumptions clearly indicated
+- [ ] No contradictory statements
+- [ ] No duplicated information
+- [ ] Terminology consistent throughout
+- [ ] Formatting consistent (headings, capitalization, units, dates, numbers, references)
+- [ ] No marketing/fluffy/vague language
+
+**External Quality Checklist (if tier = External/Customer/Regulatory/Executive/Public):**
+- [ ] Document is self-contained
+- [ ] No hidden dependencies on internal documents
+- [ ] All Required References summarized within the document
+- [ ] Informational References clearly marked as optional
+- [ ] Every major conclusion understandable from this document alone
+- [ ] Every recommendation/requirement/decision is stand-alone interpretable
+
+Record pass/fail status in the implementation report.
 
 ### STEP 6: UPDATE TRACKING IN `masterplan/02_plan.md`
 1. Set `Status` to `done` if verification passed, or `blocked` if not

@@ -14,6 +14,11 @@ The following skills are available and relevant to this agent's role:
 
 - **[to-prd](../../skills/to-prd/SKILL.md)**: Turn a conversation into a structured PRD published to the issue tracker. Use when requirements are ready for formal documentation.
 - **[writing-plans](../../skills/writing-plans/SKILL.md)**: Turn a spec or requirements into a multi-step implementation plan. Use when a spec is approved and code needs to be written.
+- **[document-quality-standards](../../skills/document-quality-standards/SKILL.md)**: Professional document quality standards covering writing principles, depth control, quality validation, and anti-AI writing standards. Load before creating any PM document.
+
+```
+skill(name="document-quality-standards")
+```
 
 # PM Writer Agent
 
@@ -72,6 +77,15 @@ When user provides a template or sample document:
 - Read template structure and style
 - Map planning/analysis content to template sections
 
+### STEP 3a: PRE-WRITING QUALITY GATE
+
+Before creating the document, validate:
+1. **Document type identified** — What type of PM document is this? (Module A)
+2. **Target audience identified** — Who will read this? (Module E audiences)
+3. **Depth level determined** — What level of detail is appropriate? (Module E matrix)
+4. **Independence tier assessed** — Is this internal team doc or client/executive facing? (Module B tiers)
+5. **Structure selected** — Does the planned structure match the document type? (Module D)
+
 ### STEP 4: INTEGRATE PLANNING + ANALYSIS
 
 Before creating, ensure alignment:
@@ -97,6 +111,30 @@ See: `skills/content-research-writer/SKILL.md`
 - Content structure matches template/planner input
 - Analyst findings are reflected
 - Format applied correctly
+
+### STEP 6a: POST-WRITING QUALITY VALIDATION
+
+Run the quality validation checklist from Module F:
+
+**Internal Quality Checklist (always):**
+- [ ] Document type matches stated purpose
+- [ ] Structure matches content type
+- [ ] Depth matches target audience
+- [ ] All claims supported by evidence
+- [ ] Assumptions clearly indicated
+- [ ] No contradictory statements
+- [ ] No duplicated information
+- [ ] Terminology consistent
+- [ ] Formatting consistent
+- [ ] No marketing/fluffy/vague language
+
+**External Quality Checklist (if PM doc goes to client/executive/external):**
+- [ ] Document is self-contained
+- [ ] No hidden dependencies on internal documents
+- [ ] All Required References summarized within document
+- [ ] Informational References marked as optional
+- [ ] Every major conclusion understandable from this document alone
+- [ ] Every recommendation stand-alone interpretable
 
 ### STEP 7: UPDATE TRACKING IN `masterplan/02_plan.md`
 1. Set `Status` to `done` if verification passed, or `blocked` if not

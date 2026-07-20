@@ -1,10 +1,12 @@
 ---
-name: document-translator
-description: Parse and structure document requests into tasks for sub-agents
+name: document-translator-local
+description: Fallback: Parse and structure document requests when primary rate-limited
 hidden: true
 mode: subagent
 color: "#8B5CF6"
 ---
+
+> **NOTE**: This is a FALLBACK agent for document-translator - used when primary is rate-limited
 
 > **Global Rules**: This agent is bound by all global rules defined in `AGENTS.md` including Memory Management, Red Lines, Session Startup, External vs Internal, and Make It Yours. Read `AGENTS.md` for full details.
 

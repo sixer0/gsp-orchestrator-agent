@@ -26,6 +26,7 @@ This skill acts as your writing partner, helping you research, outline, draft, a
 - Writing with proper citations and references
 - Improving hooks and introductions
 - Getting section-by-section feedback while writing
+- Creating professional documents that require quality standards compliance — combine with `document-quality-standards` skill for writing principles, evidence handling, and quality validation
 
 ## What This Skill Does
 
@@ -345,13 +346,17 @@ When a user requests writing assistance:
    3. **Conclusion**: [Specific improvements]
    4. **Title**: [Options if needed]
    
-   ## Pre-Publish Checklist
-   - [ ] All claims sourced
-   - [ ] Citations formatted
-   - [ ] Examples clear
-   - [ ] Transitions smooth
-   - [ ] Call to action present
-   - [ ] Proofread for typos
+    ## Pre-Publish Checklist
+    - [ ] All claims sourced
+    - [ ] Citations formatted
+    - [ ] Examples clear
+    - [ ] Transitions smooth
+    - [ ] Call to action present
+    - [ ] Proofread for typos
+    - [ ] No unsupported conclusions (every claim traces to evidence)
+    - [ ] Assumptions clearly indicated
+    - [ ] Consistent terminology throughout
+    - [ ] Self-contained (if external audience — no references to internal docs the reader won't have)
    
    Ready to publish! 🚀
    ```
@@ -522,6 +527,9 @@ Recommended structure for writing projects:
 - Use recent data when possible
 - Balance different perspectives
 - Link to original sources
+- Distinguish Facts from Assumptions — never present assumptions as verified facts
+- Never fabricate statistics, citations, or research findings — if data is unavailable, state the gap explicitly
+- Indicate source confidence level (verified, corroborated, single-source, unverified)
 
 ### For Feedback
 - Be specific about what you want: "Is this too technical?"

@@ -10,6 +10,16 @@ color: "#EF4444"
 > **Global Rules**: This agent is bound by all global rules defined in `AGENTS.md` including Memory Management, Red Lines, Heartbeats, Session Startup, External vs Internal, and Make It Yours. Read `AGENTS.md` for full details.
 
 
+## Skill Awareness
+
+The following skill is loaded before executing this agent's workflow:
+
+```
+skill(name="document-quality-standards")
+```
+
+This provides Module C (Information Processing Rules) for categorized extraction.
+
 # Document Reader Agent
 
 You read, parse, and analyze office documents (PDF, DOCX, XLSX, PPTX). You do NOT create or modify documents.
@@ -99,12 +109,70 @@ When document is a FORMAT SOURCE (used to style other documents):
 4. **Number Formats:**
    - Currency ($#,##0.00)
    - Percentage (0.0%)
-   - Date (mm/dd/yyyy)
+    - Date (mm/dd/yyyy)
+
+### Mode 3: Categorized Data Extraction (NEW)
+
+When extraction_mode="categorized":
+
+Parse extracted content into the 10 information categories from Module C:
+
+```json
+{
+  "document_info": {
+    "path": "/path/to/file.pdf",
+    "type": "pdf",
+    "pages": 15,
+    "extracted_at": "ISO-timestamp"
+  },
+  "categories": {
+    "facts": [
+      {"content": "...", "source_page": 3, "confidence": "high|medium|low"}
+    ],
+    "assumptions": [
+      {"content": "...", "source_page": 5, "needs_verification": true}
+    ],
+    "opinions": [
+      {"content": "...", "source_page": 7, "attributed_to": "..."}
+    ],
+    "findings": [
+      {"content": "...", "source_page": 10, "methodology": "..."}
+    ],
+    "evidence": [
+      {"content": "...", "source_page": 12, "supports_claim": "..."}
+    ],
+    "recommendations": [
+      {"content": "...", "source_page": 14, "actionable": true, "priority": "high|medium|low"}
+    ],
+    "risks": [
+      {"content": "...", "source_page": 8, "likelihood": "high|medium|low", "impact": "high|medium|low"}
+    ],
+    "dependencies": [
+      {"content": "...", "source_page": 6, "owner": "...", "status": "..."
+    ],
+    "unknowns": [
+      {"content": "...", "source_page": 11, "impact_if_missing": "..."}
+    ],
+    "observations": [
+      {"content": "...", "source_page": 4}
+    ]
+  },
+  "missing_information": [
+    {"category": "...", "description": "...", "potential_impact": "..."}
+  ]
+}
+```
+
+### When to Use Mode 3
+- When downstream agent is `document-analyst` (needs categorized input)
+- When document type is Research or Analytical (Module A)
+- When independence tier requires evidence chain (Regulatory, External)
 
 ### STEP 3: ANALYZE
 - Structure analysis
 - Content summarization
 - Data extraction
+- **Missing information flagging**: Identify what information is absent from the source document. For each gap, note: what's missing, potential impact, and whether the source hints at additional data elsewhere.
 
 ### STEP: EXTRACT DATA (Updated)
 After understanding request:

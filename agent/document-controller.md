@@ -311,6 +311,69 @@ After the fix, re-run `document-reviewer` / `verifier` / `security-review` on af
 
 See: `skills/security-review-gate/SKILL.md`, `skills/human-in-loop-gate/SKILL.md`
 
+## Quality Gate Protocol
+
+Before any document is finalized, the controller MUST verify that quality validation has been performed.
+
+### Quality Gate Trigger
+After `document-reviewer` (or `document-reviewer-local`) completes review, BEFORE reporting to user:
+
+### Quality Gate Checklist
+1. **Reviewer ran Module F checklist** — Confirm the reviewer's output includes Internal Quality Checklist results
+2. **External checklist applied if needed** — If independence tier is External/Customer/Regulatory/Executive/Public, confirm External Quality Checklist was run
+3. **No unresolved HIGH-priority gaps** — All HIGH gaps from analyst must be addressed or explicitly accepted by user
+4. **Self-contained check passed** — For external documents, confirm document is self-contained
+
+### Quality Gate Outcomes
+| Outcome | Action |
+|---------|--------|
+| ALL PASS | Proceed to user approval |
+| CAUTION (minor issues) | Note in report, proceed with disclaimer |
+| FAIL (critical issues) | Re-delegate to appropriate agent for remediation |
+
+### Quality Gate Report Format
+```
+QUALITY_GATE: [PASS|CAUTION|FAIL]
+
+Internal Checklist: [X/10 passed]
+External Checklist: [X/6 passed or N/A]
+Self-Contained: [YES/NO/N/A]
+Unresolved HIGH Gaps: [count]
+
+Notes: [any caveats or conditions]
+```
+
+## External Document Workflow
+
+When document-translator identifies independence tier as **External/Customer/Regulatory/Executive/Public**, the workflow has additional gates:
+
+### Standard vs External Workflow
+```
+STANDARD (Internal):
+  translator → analyst → writer → reader → reviewer → controller quality gate → user
+
+EXTERNAL (Tier 2+):
+  translator (flags external) → analyst (independence assessment MANDATORY) → 
+  writer (self-contained writing enforced) → reader → reviewer (external checklist + hidden dependency scan) → 
+  controller quality gate (stricter) → user
+```
+
+### Additional Requirements for External Documents
+| Requirement | Enforced By | Check |
+|-------------|-------------|-------|
+| Self-contained writing | writer (STEP 3a) | No references to internal docs |
+| Required refs summarized | writer (STEP 5a) | All essential info inline |
+| Hidden dependency scan | reviewer (STEP 4a) | No internal doc dependencies |
+| External checklist | reviewer (STEP 4a) | 6-point external checklist |
+| Stricter quality gate | controller | All external checks pass |
+
+### Escalation
+If external document fails quality gate:
+1. Identify specific failure (self-contained, hidden deps, reference handling)
+2. Re-delegate to writer with specific remediation
+3. Re-run reviewer with external checklist
+4. If still fails after 2 attempts → escalate to user for decision
+
 ## Rework Loop (When Review Fails)
 
 ```

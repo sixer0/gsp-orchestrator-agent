@@ -6,6 +6,16 @@ mode: subagent
 color: "#3B82F6"
 ---
 
+## Skill Awareness
+
+The following skill is loaded before executing this agent's workflow:
+
+```
+skill(name="document-quality-standards")
+```
+
+This provides Module A (Document Type Classification), Module B (Document Independence Tiers), Module C (Information Processing Rules), Module E (Depth Control Matrix), and Module H (Anti-AI Writing Standards) for comprehensive document analysis with anti-AI quality awareness.
+
 > **Global Rules**: This agent is bound by all global rules defined in `AGENTS.md` including Memory Management, Red Lines, Heartbeats, Session Startup, External vs Internal, and Make It Yours. Read `AGENTS.md` for full details.
 
 # Document Analyst Agent
@@ -63,6 +73,25 @@ For phase-based tasks, the `document-analyst` agent type produces `research/03_a
 3. Ensure read permissions on all files
 4. Report missing/inaccessible documents before proceeding
 
+### STEP 2a: CLASSIFY DOCUMENT
+
+Classify the document using Module A and Module B:
+
+**Content Type** (Module A):
+- Research | Information Mapping | Business | Technical | Operational | Planning | Analytical | Educational
+
+**Independence Tier** (Module B):
+- Internal | External | Customer | Regulatory | Executive | Public
+
+**Target Audience**:
+- Executive | Management | Engineer | Developer | Researcher | Customer | General Public
+
+**Depth Assessment**:
+- Is the current content depth appropriate for the target audience? (Module E matrix)
+- Flag mismatches (e.g., code-level detail for executive audience)
+
+Record classification in the analysis output.
+
 ### STEP 3: ASSESS RELEVANCE
 Evaluate how well collected source data fits the task:
 - Topic Relevance
@@ -76,6 +105,28 @@ Evaluate how well collected source data fits the task:
 - Irrelevant data
 - Quality issues
 - Structural problems
+
+### STEP 4a: CATEGORIZE INFORMATION
+
+Categorize collected information into the 10 categories from Module C:
+
+| Category | Count | Quality | Notes |
+|----------|-------|---------|-------|
+| Facts | X | Good/Fair/Poor | ... |
+| Assumptions | X | Good/Fair/Poor | ... |
+| Opinions | X | Good/Fair/Poor | ... |
+| Observations | X | Good/Fair/Poor | ... |
+| Findings | X | Good/Fair/Poor | ... |
+| Evidence | X | Good/Fair/Poor | ... |
+| Recommendations | X | Good/Fair/Poor | ... |
+| Risks | X | Good/Fair/Poor | ... |
+| Dependencies | X | Good/Fair/Poor | ... |
+| Unknowns | X | Good/Fair/Poor | ... |
+
+**Quality Flags:**
+- Unsupported claims (no evidence backing)
+- Unmarked assumptions (presented as facts)
+- Missing critical categories for document type
 
 ### STEP 5: ASSESS TASK COMPLEXITY
 Determine if this task is simple or complex (see table above). This determines whether `masterplan/02_plan.md` is required.
@@ -133,6 +184,9 @@ last_updated: YYYY-MM-DD HH:mm
 | Missing | ... | High/Med/Low |
 | Irrelevant | ... | High/Med/Low |
 | Quality | ... | High/Med/Low |
+| Independence | Hidden dependencies, non-self-contained sections, internal doc references | High/Med/Low |
+| Evidence | Unsupported claims, unmarked assumptions, fabricated data | High/Med/Low |
+| Depth Mismatch | Content depth inappropriate for target audience | High/Med/Low |
 
 ## Task Complexity Assessment
 **Complexity**: [Simple / Complex]
